@@ -1,6 +1,7 @@
 package com.neuronbit.lrdatf.client.impl;
 
 import com.neuronbit.lrdatf.client.ClientConfig;
+import com.neuronbit.lrdatf.client.MQClientAPI;
 import com.neuronbit.lrdatf.client.comsumer.MQClientInstance;
 import com.neuronbit.lrdatf.client.comsumer.PullCallback;
 import com.neuronbit.lrdatf.client.comsumer.PullResult;
@@ -44,14 +45,12 @@ import java.util.List;
 
 import static com.neuronbit.lrdatf.remoting.common.RemotingUtil.string2InetAddress;
 
-public class MQClientAPIImpl {
+public class MQClientAPIImpl implements MQClientAPI {
     private final Logger log = LoggerFactory.getLogger(LoggerName.CLIENT_LOGGER_NAME);
     private ClientConfig clientConfig;
-    private final DataSource pool;
+    private DataSource pool;
 
-    public MQClientAPIImpl(ClientConfig clientConfig) {
-        this.clientConfig = clientConfig;
-        pool = clientConfig.getDataSource();
+    public MQClientAPIImpl() {
     }
 
 //    public void createTopic(final String addr, final String defaultTopic, final TopicConfig topicConfig,
@@ -83,6 +82,12 @@ public class MQClientAPIImpl {
 //        throw new MQClientException(response.getCode(), response.getRemark());
 //    }
 
+    @Override
+    public void start() {
+        pool = clientConfig.getDataSource();
+    }
+
+    @Override
     public int sendHeartbeat(final HeartbeatData heartbeatData, final int timeoutMillis) throws SQLException {
         Connection connection = pool.getConnection();
         PreparedStatement insertConsumerStmt = null;
@@ -159,6 +164,7 @@ public class MQClientAPIImpl {
         return 1;
     }
 
+    @Override
     public void unregisterClient(final String clientID,
                                  final String producerGroup,
                                  final String consumerGroup,
@@ -198,6 +204,7 @@ public class MQClientAPIImpl {
         }
     }
 
+    @Override
     public SendResult sendMessage(final Message msg,
                                   final SendMessageRequestHeader requestHeader,
                                   final long timeoutMillis,
@@ -207,6 +214,7 @@ public class MQClientAPIImpl {
         return sendMessage(msg, requestHeader, timeoutMillis, communicationMode, null, null, null, 0, /*context, */producer);
     }
 
+    @Override
     public SendResult sendMessage(final Message msg,
                                   final SendMessageRequestHeader requestHeader,
                                   final long timeoutMillis,
@@ -423,18 +431,21 @@ public class MQClientAPIImpl {
 //        throw new MQBrokerException(response.getCode(), response.getRemark(), addr);
 //    }
 
+    @Override
     public TopicRouteData getDefaultTopicRouteInfoFromNameServer(final String topic, final int timeoutMillis)
             throws MQClientException, InterruptedException, SQLException {
 
         return getTopicRouteInfoFromNameServer(topic, timeoutMillis, false);
     }
 
+    @Override
     public TopicRouteData getTopicRouteInfoFromNameServer(final String topic, final int timeoutMillis)
             throws MQClientException, InterruptedException, SQLException {
 
         return getTopicRouteInfoFromNameServer(topic, timeoutMillis, true);
     }
 
+    @Override
     public TopicRouteData getTopicRouteInfoFromNameServer(final String topic, final int timeoutMillis,
                                                           boolean allowTopicNotExist) throws SQLException {
         Connection connection = pool.getConnection();
@@ -463,6 +474,7 @@ public class MQClientAPIImpl {
         return data;
     }
 
+    @Override
     public void checkClientInBroker(final String consumerGroup,
                                     final String clientId, final SubscriptionData subscriptionData,
                                     final int timeoutMillis) throws MQClientException, SQLException {
@@ -486,6 +498,7 @@ public class MQClientAPIImpl {
         }
     }
 
+    @Override
     public List<String> getConsumerIdListByGroup(final String consumerGroup,
                                                  final int timeoutMillis) throws SQLException {
         List<String> result = new ArrayList<>();
@@ -611,6 +624,7 @@ public class MQClientAPIImpl {
 //
 //        throw new MQClientException(response.getCode(), response.getRemark());
 //    }
+    @Override
     public void consumerSendMessageBack(final MessageExt msg,
                                         final String consumerGroup,
                                         final int delayLevel,
@@ -652,9 +666,11 @@ public class MQClientAPIImpl {
         }
     }
 
+    @Override
     public void shutdown() {
     }
 
+    @Override
     public PullResult pullMessage(final PullMessageRequestHeader requestHeader,
                                   final int timeoutMillis,
                                   final CommunicationMode communicationMode,
@@ -708,6 +724,7 @@ public class MQClientAPIImpl {
         }
     }
 
+    @Override
     public long queryConsumerOffset(final QueryConsumerOffsetRequestHeader requestHeader,
                                     final int timeoutMillis) throws MQBrokerException, SQLException {
         PreparedStatement statement = null;
@@ -737,6 +754,7 @@ public class MQClientAPIImpl {
         }
     }
 
+    @Override
     public void updateConsumerOffset(final UpdateConsumerOffsetRequestHeader requestHeader,
                                      final int timeoutMillis) throws MQBrokerException, SQLException {
         PreparedStatement statement = null;
@@ -763,6 +781,7 @@ public class MQClientAPIImpl {
         }
     }
 
+    @Override
     public long searchOffset(final String topic, final int queueId, final long timestamp,
                              final int timeoutMillis) throws MQBrokerException, SQLException {
         PreparedStatement statement = null;
@@ -790,6 +809,7 @@ public class MQClientAPIImpl {
         }
     }
 
+    @Override
     public long getMaxOffset(final String topic, final int queueId, final int timeoutMillis) throws SQLException {
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
@@ -812,6 +832,7 @@ public class MQClientAPIImpl {
         }
     }
 
+    @Override
     public long getMinOffset(final String topic, final int queueId, final int timeoutMillis) throws SQLException {
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
@@ -835,6 +856,7 @@ public class MQClientAPIImpl {
         }
     }
 
+    @Override
     public long getEarliestMsgStoretime(final String topic, final int queueId,
                                         final int timeoutMillis) throws SQLException, MQBrokerException {
         PreparedStatement statement = null;
@@ -945,6 +967,7 @@ public class MQClientAPIImpl {
         return new PullResult(pullStatus, nextBeginOffset, minOffset, maxOffset, messageExts);
     }
 
+    @Override
     public boolean tryLock(String lockId, String lockValue, int timeout) {
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
@@ -972,6 +995,7 @@ public class MQClientAPIImpl {
         }
     }
 
+    @Override
     public boolean unlock(String lockId, String lockValue, int timeout) {
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
@@ -997,6 +1021,7 @@ public class MQClientAPIImpl {
         }
     }
 
+    @Override
     public void scanNotActiveProducer() {
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
@@ -1019,6 +1044,7 @@ public class MQClientAPIImpl {
         }
     }
 
+    @Override
     public void scanNotActiveConsumer() {
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
@@ -1039,6 +1065,11 @@ public class MQClientAPIImpl {
                 }
             }
         }
+    }
+
+    @Override
+    public void setClientConfig(ClientConfig clientConfig) {
+        this.clientConfig = clientConfig;
     }
 
 }

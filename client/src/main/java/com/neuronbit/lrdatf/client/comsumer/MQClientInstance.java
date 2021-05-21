@@ -2,9 +2,10 @@ package com.neuronbit.lrdatf.client.comsumer;
 
 import com.neuronbit.lrdatf.client.ClientConfig;
 import com.neuronbit.lrdatf.client.ClientHousekeepingService;
+import com.neuronbit.lrdatf.client.MQClientAPI;
+import com.neuronbit.lrdatf.client.common.ClientErrorCode;
 import com.neuronbit.lrdatf.client.common.LockName;
 import com.neuronbit.lrdatf.client.impl.MQAdminImpl;
-import com.neuronbit.lrdatf.client.impl.MQClientAPIImpl;
 import com.neuronbit.lrdatf.client.impl.MQClientManager;
 import com.neuronbit.lrdatf.client.impl.consumer.DefaultMQPushConsumerImpl;
 import com.neuronbit.lrdatf.client.impl.consumer.ProcessQueue;
@@ -56,7 +57,7 @@ public class MQClientInstance {
     private final Lock lockHeartbeat = new ReentrantLock();
     private final Lock lockNamesrv = new ReentrantLock();
     private final AtomicLong sendHeartbeatTimesTotal = new AtomicLong(0);
-    private final MQClientAPIImpl mQClientAPIImpl;
+    private final MQClientAPI mQClientAPIImpl;
     private final MQAdminImpl mQAdminImpl;
     private final ConsumerStatsManager consumerStatsManager;
     private final ConcurrentMap<String/* group */, MQProducerInner> producerTable = new ConcurrentHashMap<>();
@@ -65,7 +66,7 @@ public class MQClientInstance {
 
     private final ConcurrentMap<String/* Topic */, TopicRouteData> topicRouteTable = new ConcurrentHashMap<>();
 
-    public MQClientInstance(ClientConfig clientConfig, int instanceIndex, String clientId) {
+    public MQClientInstance(ClientConfig clientConfig, int instanceIndex, String clientId) throws MQClientException {
         this.clientConfig = clientConfig;
         this.instanceIndex = instanceIndex;
         this.clientId = clientId;
@@ -79,7 +80,7 @@ public class MQClientInstance {
 
         this.consumerStatsManager = new ConsumerStatsManager(this.scheduledExecutorService);
 
-        this.mQClientAPIImpl = new MQClientAPIImpl(clientConfig);
+        this.mQClientAPIImpl = tryLoadMQClientAPIImpl(clientConfig);
         this.mQAdminImpl = new MQAdminImpl(this);
 
         log.info("Created a new client Instance, InstanceIndex:{}, ClientID:{}, ClientConfig:{}, ClientVersion:{}",
@@ -89,11 +90,24 @@ public class MQClientInstance {
                 MQVersion.getVersionDesc(MQVersion.CURRENT_VERSION));
     }
 
+    private MQClientAPI tryLoadMQClientAPIImpl(ClientConfig clientConfig) throws MQClientException {
+        ServiceLoader<MQClientAPI> loader = ServiceLoader.load(MQClientAPI.class);
+        if (loader.iterator().hasNext()) {
+            final MQClientAPI mqClientAPI = loader.iterator().next();
+            mqClientAPI.setClientConfig(clientConfig);
+            return mqClientAPI;
+        } else {
+            throw new MQClientException(ClientErrorCode.NOT_FOUND_CLIENT_IMPL_EXCEPTION, "no MQClientAPI implementation found");
+        }
+    }
+
     public void start() throws MQClientException {
         synchronized (this) {
             switch (this.serviceState) {
                 case CREATE_JUST:
                     this.serviceState = ServiceState.START_FAILED;
+                    // Start Client API
+                    this.mQClientAPIImpl.start();
                     // Start various schedule tasks
                     this.startScheduledTask();
                     // Start pull service
@@ -394,7 +408,7 @@ public class MQClientInstance {
         }
     }
 
-    public MQClientAPIImpl getMQClientAPIImpl() {
+    public MQClientAPI getMQClientAPIImpl() {
         return mQClientAPIImpl;
     }
 

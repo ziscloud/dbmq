@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
 }
 
 group 'org.example'
@@ -12,6 +12,9 @@ repositories {
 dependencies {
     implementation project(':core')
     implementation project(':client')
+
+    api group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
+    api group: 'mysql', name: 'mysql-connector-java', version: '8.0.25'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'

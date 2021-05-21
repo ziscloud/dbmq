@@ -3,6 +3,7 @@ package com.neuronbit.lrdatf.client.impl;
 import com.neuronbit.lrdatf.client.ClientConfig;
 import com.neuronbit.lrdatf.client.comsumer.MQClientInstance;
 import com.neuronbit.lrdatf.common.constant.LoggerName;
+import com.neuronbit.lrdatf.exception.MQClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,13 +26,12 @@ public class MQClientManager {
         return instance;
     }
 
-    public MQClientInstance getOrCreateMQClientInstance(final ClientConfig clientConfig) {
+    public MQClientInstance getOrCreateMQClientInstance(final ClientConfig clientConfig) throws MQClientException {
         String clientId = clientConfig.buildMQClientId();
         MQClientInstance instance = this.factoryTable.get(clientId);
         if (null == instance) {
-            instance =
-                    new MQClientInstance(clientConfig.cloneClientConfig(),
-                            this.factoryIndexGenerator.getAndIncrement(), clientId);
+            instance = new MQClientInstance(clientConfig.cloneClientConfig(),
+                    this.factoryIndexGenerator.getAndIncrement(), clientId);
             MQClientInstance prev = this.factoryTable.putIfAbsent(clientId, instance);
             if (prev != null) {
                 instance = prev;
