@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 public class MQAdminImpl {
     private final Logger log = LoggerFactory.getLogger(LoggerName.CLIENT_LOGGER_NAME);
     private final MQClientInstance mQClientFactory;
-    private int timeoutMillis = 6;
+    private long timeoutMillis = 6000;
 
     public MQAdminImpl(MQClientInstance mQClientFactory) {
         this.mQClientFactory = mQClientFactory;
@@ -36,7 +36,7 @@ public class MQAdminImpl {
         return timeoutMillis;
     }
 
-    public void setTimeoutMillis(int timeoutMillis) {
+    public void setTimeoutMillis(long timeoutMillis) {
         this.timeoutMillis = timeoutMillis;
     }
 

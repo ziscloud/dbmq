@@ -88,7 +88,8 @@ public class MQClientAPIImpl implements MQClientAPI {
     }
 
     @Override
-    public int sendHeartbeat(final HeartbeatData heartbeatData, final int timeoutMillis) throws SQLException {
+    public int sendHeartbeat(final HeartbeatData heartbeatData, final long timeoutMillis) throws SQLException {
+        int timeout = (int) Duration.ofMillis(timeoutMillis).getSeconds();
         Connection connection = pool.getConnection();
         PreparedStatement insertConsumerStmt = null;
         PreparedStatement deleteProducerStmt = null;
@@ -100,7 +101,7 @@ public class MQClientAPIImpl implements MQClientAPI {
 
             deleteProducerStmt = connection.prepareStatement("delete from producer_data where client_id=?");
             deleteProducerStmt.setString(1, heartbeatData.getClientID());
-            deleteProducerStmt.setQueryTimeout(timeoutMillis);
+            deleteProducerStmt.setQueryTimeout(timeout);
             deleteProducerStmt.execute();
 
             if (!heartbeatData.getProducerDataSet().isEmpty()) {
@@ -109,16 +110,16 @@ public class MQClientAPIImpl implements MQClientAPI {
                 for (ProducerData producerData : heartbeatData.getProducerDataSet()) {
                     insertProducerStmt.setString(1, heartbeatData.getClientID());
                     insertProducerStmt.setString(2, producerData.getGroupName());
-                    insertProducerStmt.setQueryTimeout(timeoutMillis);
+                    insertProducerStmt.setQueryTimeout(timeout);
                     insertProducerStmt.addBatch();
                 }
-                insertProducerStmt.setQueryTimeout(timeoutMillis);
+                insertProducerStmt.setQueryTimeout(timeout);
                 insertProducerStmt.executeBatch();
             }
 
             deleteConsumerStmt = connection.prepareStatement("delete from consumer_data where client_id=?");
             deleteConsumerStmt.setString(1, heartbeatData.getClientID());
-            deleteConsumerStmt.setQueryTimeout(timeoutMillis);
+            deleteConsumerStmt.setQueryTimeout(timeout);
             deleteConsumerStmt.execute();
 
             if (!heartbeatData.getConsumerDataSet().isEmpty()) {
@@ -137,7 +138,7 @@ public class MQClientAPIImpl implements MQClientAPI {
                         insertConsumerStmt.addBatch();
                     }
                 }
-                insertConsumerStmt.setQueryTimeout(timeoutMillis);
+                insertConsumerStmt.setQueryTimeout(timeout);
                 insertConsumerStmt.executeBatch();
             }
 
@@ -168,7 +169,8 @@ public class MQClientAPIImpl implements MQClientAPI {
     public void unregisterClient(final String clientID,
                                  final String producerGroup,
                                  final String consumerGroup,
-                                 final int timeoutMillis) throws InterruptedException, SQLException {
+                                 final long timeoutMillis) throws InterruptedException, SQLException {
+        final int timeout = (int) Duration.ofMillis(timeoutMillis).getSeconds();
         Connection connection = pool.getConnection();
         PreparedStatement deleteConsumerStmt = null;
         PreparedStatement deleteProducerStmt = null;
@@ -178,7 +180,7 @@ public class MQClientAPIImpl implements MQClientAPI {
                 deleteProducerStmt = connection.prepareStatement("delete from producer_data where client_id=? and group_name=?");
                 deleteProducerStmt.setString(1, clientID);
                 deleteProducerStmt.setString(2, producerGroup);
-                deleteProducerStmt.setQueryTimeout(timeoutMillis);
+                deleteProducerStmt.setQueryTimeout(timeout);
                 deleteProducerStmt.execute();
             }
 
@@ -186,7 +188,7 @@ public class MQClientAPIImpl implements MQClientAPI {
                 deleteConsumerStmt = connection.prepareStatement("delete from consumer_data where client_id=? and group_name=?");
                 deleteConsumerStmt.setString(1, clientID);
                 deleteConsumerStmt.setString(2, producerGroup);
-                deleteConsumerStmt.setQueryTimeout(timeoutMillis);
+                deleteConsumerStmt.setQueryTimeout(timeout);
                 deleteConsumerStmt.execute();
             }
 
@@ -260,7 +262,7 @@ public class MQClientAPIImpl implements MQClientAPI {
     }
 
     private SendResult sendMessageSync(final Message msg,
-                                       final int timeoutMillis,
+                                       final long timeoutMillis,
                                        final SendMessageRequestHeader requestHeader) throws SQLException {
 
         final Connection connection = pool.getConnection();
@@ -284,7 +286,7 @@ public class MQClientAPIImpl implements MQClientAPI {
             statement.setInt(10, requestHeader.getMaxReconsumeTimes() == null ? 0 : requestHeader.getMaxReconsumeTimes());
             statement.setInt(11, requestHeader.getReconsumeTimes());
             statement.setString(12, requestHeader.getProducerGroup());
-            statement.setQueryTimeout(timeoutMillis);
+            statement.setQueryTimeout((int) Duration.ofMillis(timeoutMillis).getSeconds());
             statement.execute();
 
             connection.commit();
@@ -432,21 +434,21 @@ public class MQClientAPIImpl implements MQClientAPI {
 //    }
 
     @Override
-    public TopicRouteData getDefaultTopicRouteInfoFromNameServer(final String topic, final int timeoutMillis)
+    public TopicRouteData getDefaultTopicRouteInfoFromNameServer(final String topic, final long timeoutMillis)
             throws MQClientException, InterruptedException, SQLException {
 
         return getTopicRouteInfoFromNameServer(topic, timeoutMillis, false);
     }
 
     @Override
-    public TopicRouteData getTopicRouteInfoFromNameServer(final String topic, final int timeoutMillis)
+    public TopicRouteData getTopicRouteInfoFromNameServer(final String topic, final long timeoutMillis)
             throws MQClientException, InterruptedException, SQLException {
 
         return getTopicRouteInfoFromNameServer(topic, timeoutMillis, true);
     }
 
     @Override
-    public TopicRouteData getTopicRouteInfoFromNameServer(final String topic, final int timeoutMillis,
+    public TopicRouteData getTopicRouteInfoFromNameServer(final String topic, final long timeoutMillis,
                                                           boolean allowTopicNotExist) throws SQLException {
         Connection connection = pool.getConnection();
         final TopicRouteData data = new TopicRouteData();
@@ -455,7 +457,7 @@ public class MQClientAPIImpl implements MQClientAPI {
         try {
             statement = connection.prepareStatement("select * from topic_config where topic=? and status = 'ACTIVE'");
             statement.setString(1, topic);
-            statement.setQueryTimeout(timeoutMillis);
+            statement.setQueryTimeout((int) Duration.ofMillis(timeoutMillis).getSeconds());
             final ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 final QueueData queueData = new QueueData();
@@ -477,7 +479,7 @@ public class MQClientAPIImpl implements MQClientAPI {
     @Override
     public void checkClientInBroker(final String consumerGroup,
                                     final String clientId, final SubscriptionData subscriptionData,
-                                    final int timeoutMillis) throws MQClientException, SQLException {
+                                    final long timeoutMillis) throws MQClientException, SQLException {
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
             statement = connection.prepareStatement("select * from consumer_data " +
@@ -486,7 +488,7 @@ public class MQClientAPIImpl implements MQClientAPI {
             statement.setString(2, consumerGroup);
             statement.setString(3, subscriptionData.getTopic());
             statement.setLong(4, subscriptionData.getSubVersion());
-            statement.setQueryTimeout(timeoutMillis);
+            statement.setQueryTimeout((int) Duration.ofMillis(timeoutMillis).getSeconds());
             final ResultSet resultSet = statement.executeQuery();
             if (!resultSet.next()) {
                 throw new MQClientException(ResponseCode.SUBSCRIPTION_GROUP_NOT_EXIST, "check client failed");
@@ -500,13 +502,13 @@ public class MQClientAPIImpl implements MQClientAPI {
 
     @Override
     public List<String> getConsumerIdListByGroup(final String consumerGroup,
-                                                 final int timeoutMillis) throws SQLException {
+                                                 final long timeoutMillis) throws SQLException {
         List<String> result = new ArrayList<>();
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
             statement = connection.prepareStatement("select client_id from consumer_data where group_name=?");
             statement.setString(1, consumerGroup);
-            statement.setQueryTimeout(timeoutMillis);
+            statement.setQueryTimeout((int) Duration.ofMillis(timeoutMillis).getSeconds());
             final ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 result.add(resultSet.getString("client_id"));
@@ -628,7 +630,7 @@ public class MQClientAPIImpl implements MQClientAPI {
     public void consumerSendMessageBack(final MessageExt msg,
                                         final String consumerGroup,
                                         final int delayLevel,
-                                        final int timeoutMillis,
+                                        final long timeoutMillis,
                                         final int maxConsumeRetryTimes) throws SQLException {
         final Connection connection = pool.getConnection();
         PreparedStatement statement = null;
@@ -651,7 +653,7 @@ public class MQClientAPIImpl implements MQClientAPI {
             statement.setInt(10, maxConsumeRetryTimes);
             statement.setInt(11, msg.getReconsumeTimes());
             statement.setString(12, consumerGroup);
-            statement.setQueryTimeout(timeoutMillis);
+            statement.setQueryTimeout((int) Duration.ofMillis(timeoutMillis).getSeconds());
             statement.execute();
 
             connection.commit();
@@ -672,7 +674,7 @@ public class MQClientAPIImpl implements MQClientAPI {
 
     @Override
     public PullResult pullMessage(final PullMessageRequestHeader requestHeader,
-                                  final int timeoutMillis,
+                                  final long timeoutMillis,
                                   final CommunicationMode communicationMode,
                                   final PullCallback pullCallback) throws MQBrokerException, SQLException {
         switch (communicationMode) {
@@ -693,8 +695,9 @@ public class MQClientAPIImpl implements MQClientAPI {
     }
 
     private void pullMessageAsync(final PullMessageRequestHeader request,
-                                  final int timeoutMillis,
+                                  final long timeoutMillis,
                                   final PullCallback pullCallback) throws SQLException {
+        final int timeout = (int) Duration.ofMillis(timeoutMillis).getSeconds();
         PreparedStatement messageStmt = null;
         PreparedStatement idStmt = null;
         try (Connection connection = pool.getConnection()) {
@@ -704,11 +707,11 @@ public class MQClientAPIImpl implements MQClientAPI {
                     "from message_" + request.getTopic() + "_" + queueId + " where id >= ? limit ?");
             messageStmt.setLong(1, request.getCommitOffset());
             messageStmt.setInt(2, request.getMaxMsgNums());
-            messageStmt.setQueryTimeout(timeoutMillis);
+            messageStmt.setQueryTimeout(timeout);
 
             idStmt = connection.prepareStatement(
                     "select min(id), max(id) from message_" + request.getTopic() + "_" + queueId);
-            idStmt.setQueryTimeout(timeoutMillis);
+            idStmt.setQueryTimeout(timeout);
 
             PullResult pullResult = this.processPullResponse(messageStmt.executeQuery(), idStmt.executeQuery());
             pullCallback.onSuccess(pullResult);
@@ -726,7 +729,7 @@ public class MQClientAPIImpl implements MQClientAPI {
 
     @Override
     public long queryConsumerOffset(final QueryConsumerOffsetRequestHeader requestHeader,
-                                    final int timeoutMillis) throws MQBrokerException, SQLException {
+                                    final long timeoutMillis) throws MQBrokerException, SQLException {
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
             statement = connection.prepareStatement("select offset_value from consumer_offset " +
@@ -734,7 +737,7 @@ public class MQClientAPIImpl implements MQClientAPI {
             statement.setString(1, requestHeader.getTopic());
             statement.setInt(2, requestHeader.getQueueId());
             statement.setString(3, requestHeader.getConsumerGroup());
-            statement.setQueryTimeout(timeoutMillis);
+            statement.setQueryTimeout((int) Duration.ofMillis(timeoutMillis).getSeconds());
 
             long offset = -1;
             final ResultSet resultSet = statement.executeQuery();
@@ -756,7 +759,7 @@ public class MQClientAPIImpl implements MQClientAPI {
 
     @Override
     public void updateConsumerOffset(final UpdateConsumerOffsetRequestHeader requestHeader,
-                                     final int timeoutMillis) throws MQBrokerException, SQLException {
+                                     final long timeoutMillis) throws MQBrokerException, SQLException {
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
             statement = connection.prepareStatement("insert into consumer_offset(group_name," +
@@ -767,7 +770,7 @@ public class MQClientAPIImpl implements MQClientAPI {
             statement.setInt(3, requestHeader.getQueueId());
             statement.setLong(4, requestHeader.getCommitOffset());
             statement.setLong(5, requestHeader.getCommitOffset());
-            statement.setQueryTimeout(timeoutMillis);
+            statement.setQueryTimeout((int) Duration.ofMillis(timeoutMillis).getSeconds());
 
             final int affectedRows = statement.executeUpdate();
             statement.close();
@@ -783,7 +786,7 @@ public class MQClientAPIImpl implements MQClientAPI {
 
     @Override
     public long searchOffset(final String topic, final int queueId, final long timestamp,
-                             final int timeoutMillis) throws MQBrokerException, SQLException {
+                             final long timeoutMillis) throws MQBrokerException, SQLException {
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
             statement = connection.prepareStatement("select id from message_" + topic + "_" + queueId
@@ -791,7 +794,7 @@ public class MQClientAPIImpl implements MQClientAPI {
             statement.setString(1, topic);
             statement.setInt(2, queueId);
             statement.setLong(3, timestamp);
-            statement.setQueryTimeout(timeoutMillis);
+            statement.setQueryTimeout((int) Duration.ofMillis(timeoutMillis).getSeconds());
 
             long offset = -1;
             final ResultSet resultSet = statement.executeQuery();
@@ -810,14 +813,14 @@ public class MQClientAPIImpl implements MQClientAPI {
     }
 
     @Override
-    public long getMaxOffset(final String topic, final int queueId, final int timeoutMillis) throws SQLException {
+    public long getMaxOffset(final String topic, final int queueId, final long timeoutMillis) throws SQLException {
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
             statement = connection.prepareStatement("select max(id) " +
                     "from message_" + topic + "_" + queueId + " where topic=? and queue_id=?");
             statement.setString(1, topic);
             statement.setInt(2, queueId);
-            statement.setQueryTimeout(timeoutMillis);
+            statement.setQueryTimeout((int) Duration.ofMillis(timeoutMillis).getSeconds());
 
             long offset = 0;
             final ResultSet resultSet = statement.executeQuery();
@@ -833,14 +836,14 @@ public class MQClientAPIImpl implements MQClientAPI {
     }
 
     @Override
-    public long getMinOffset(final String topic, final int queueId, final int timeoutMillis) throws SQLException {
+    public long getMinOffset(final String topic, final int queueId, final long timeoutMillis) throws SQLException {
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
             statement = connection.prepareStatement("select min(id) " +
                     "from message_" + topic + "_" + queueId + " where topic=? and queue_id=?");
             statement.setString(1, topic);
             statement.setInt(2, queueId);
-            statement.setQueryTimeout(timeoutMillis);
+            statement.setQueryTimeout((int) Duration.ofMillis(timeoutMillis).getSeconds());
 
             long offset = -1;
             final ResultSet resultSet = statement.executeQuery();
@@ -858,14 +861,14 @@ public class MQClientAPIImpl implements MQClientAPI {
 
     @Override
     public long getEarliestMsgStoretime(final String topic, final int queueId,
-                                        final int timeoutMillis) throws SQLException, MQBrokerException {
+                                        final long timeoutMillis) throws SQLException, MQBrokerException {
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
             statement = connection.prepareStatement("select store_timestamp " +
                     "from message_" + topic + "_" + queueId + " where topic=? and queue_id=? order by id asc limit 1");
             statement.setString(1, topic);
             statement.setInt(2, queueId);
-            statement.setQueryTimeout(timeoutMillis);
+            statement.setQueryTimeout((int) Duration.ofMillis(timeoutMillis).getSeconds());
 
             long offset = -1;
             final ResultSet resultSet = statement.executeQuery();
@@ -885,8 +888,9 @@ public class MQClientAPIImpl implements MQClientAPI {
 
     private PullResult pullMessageSync(
             final PullMessageRequestHeader request,
-            final int timeoutMillis
+            final long timeoutMillis
     ) throws SQLException {
+        final int timeout = (int) Duration.ofMillis(timeoutMillis).getSeconds();
         PreparedStatement msgStmt = null;
         PreparedStatement idStmt = null;
         try (Connection connection = pool.getConnection()) {
@@ -895,11 +899,11 @@ public class MQClientAPIImpl implements MQClientAPI {
                     "from message_" + request.getTopic() + "_" + queueId + " where id >= ? limit ?");
             msgStmt.setLong(1, request.getCommitOffset());
             msgStmt.setInt(2, request.getMaxMsgNums());
-            msgStmt.setQueryTimeout(timeoutMillis);
+            msgStmt.setQueryTimeout(timeout);
 
             idStmt = connection.prepareStatement("select min(id), max(id) " +
                     "from message_" + request.getTopic() + "_" + queueId);
-            idStmt.setQueryTimeout(timeoutMillis);
+            idStmt.setQueryTimeout(timeout);
 
             return this.processPullResponse(msgStmt.executeQuery(), idStmt.executeQuery());
         } finally {

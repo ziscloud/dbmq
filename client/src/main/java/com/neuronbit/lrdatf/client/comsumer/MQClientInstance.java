@@ -247,7 +247,7 @@ public class MQClientInstance {
 
     private void unregisterClient(final String producerGroup, final String consumerGroup) {
         try {
-            this.mQClientAPIImpl.unregisterClient(this.clientId, producerGroup, consumerGroup, 3);
+            this.mQClientAPIImpl.unregisterClient(this.clientId, producerGroup, consumerGroup, 3000);
             log.info("unregister client[Producer: {} Consumer: {}] success", producerGroup, consumerGroup);
         } catch (InterruptedException | SQLException e) {
             log.error("unregister client exception", e);
@@ -349,7 +349,7 @@ public class MQClientInstance {
         long times = this.sendHeartbeatTimesTotal.getAndIncrement();
 
         try {
-            this.mQClientAPIImpl.sendHeartbeat(heartbeatData, 3);
+            this.mQClientAPIImpl.sendHeartbeat(heartbeatData, 3000);
             if (times % 20 == 0) {
                 log.info("send heart beat success");
                 log.info(heartbeatData.toString());
@@ -734,12 +734,12 @@ public class MQClientInstance {
 
     public void scanException() {
         String lockValue = MessageClientIDSetter.createUniqID();
-        if (mQClientAPIImpl.tryLock(LockName.CLIENT_HOUSEKEEPING, lockValue, 1)) {
+        if (mQClientAPIImpl.tryLock(LockName.CLIENT_HOUSEKEEPING, lockValue, 1000)) {
             try {
                 mQClientAPIImpl.scanNotActiveProducer();
                 mQClientAPIImpl.scanNotActiveConsumer();
             } finally {
-                mQClientAPIImpl.unlock(LockName.CLIENT_HOUSEKEEPING, lockValue, 1);
+                mQClientAPIImpl.unlock(LockName.CLIENT_HOUSEKEEPING, lockValue, 1000);
             }
         } else {
             log.info("try to get {} lock failed", LockName.CLIENT_HOUSEKEEPING);

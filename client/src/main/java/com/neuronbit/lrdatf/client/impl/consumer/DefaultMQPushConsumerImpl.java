@@ -308,7 +308,7 @@ public class DefaultMQPushConsumerImpl implements MQConsumerInner {
                     sysFlag,
                     commitOffsetValue,
                     BROKER_SUSPEND_MAX_TIME_MILLIS,
-                    (int) CONSUMER_TIMEOUT_MILLIS_WHEN_SUSPEND,
+                    CONSUMER_TIMEOUT_MILLIS_WHEN_SUSPEND,
                     CommunicationMode.ASYNC,
                     pullCallback
             );

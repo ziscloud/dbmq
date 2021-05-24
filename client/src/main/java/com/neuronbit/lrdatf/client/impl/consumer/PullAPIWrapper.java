@@ -121,7 +121,7 @@ public class PullAPIWrapper {
             final int sysFlag,
             final long commitOffset,
             final long brokerSuspendMaxTimeMillis,
-            final int timeoutMillis,
+            final long timeoutMillis,
             final CommunicationMode communicationMode,
             final PullCallback pullCallback
     ) throws InterruptedException, SQLException, MQBrokerException {

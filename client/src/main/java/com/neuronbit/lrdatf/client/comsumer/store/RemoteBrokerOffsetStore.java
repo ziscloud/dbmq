@@ -194,7 +194,7 @@ public class RemoteBrokerOffsetStore implements OffsetStore {
         requestHeader.setQueueId(mq.getQueueId());
         requestHeader.setCommitOffset(offset);
 
-        this.mQClientFactory.getMQClientAPIImpl().updateConsumerOffset(requestHeader, 5);
+        this.mQClientFactory.getMQClientAPIImpl().updateConsumerOffset(requestHeader, 5000);
 
     }
 
@@ -204,6 +204,6 @@ public class RemoteBrokerOffsetStore implements OffsetStore {
         requestHeader.setConsumerGroup(this.groupName);
         requestHeader.setQueueId(mq.getQueueId());
 
-        return this.mQClientFactory.getMQClientAPIImpl().queryConsumerOffset(requestHeader, 5);
+        return this.mQClientFactory.getMQClientAPIImpl().queryConsumerOffset(requestHeader, 5000);
     }
 }

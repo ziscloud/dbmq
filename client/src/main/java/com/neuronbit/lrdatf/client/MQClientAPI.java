@@ -25,14 +25,15 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface MQClientAPI {
+
     void start();
 
-    int sendHeartbeat(HeartbeatData heartbeatData, int timeoutMillis) throws SQLException;
+    int sendHeartbeat(HeartbeatData heartbeatData, long timeoutMillis) throws SQLException;
 
     void unregisterClient(String clientID,
                           String producerGroup,
                           String consumerGroup,
-                          int timeoutMillis) throws InterruptedException, SQLException;
+                          long timeoutMillis) throws InterruptedException, SQLException;
 
     SendResult sendMessage(Message msg,
                            SendMessageRequestHeader requestHeader,
@@ -52,21 +53,21 @@ public interface MQClientAPI {
                            //final SendMessageContext context,
                            DefaultMQProducerImpl producer) throws RemotingTooMuchRequestException, MQClientException;
 
-    TopicRouteData getDefaultTopicRouteInfoFromNameServer(String topic, int timeoutMillis)
+    TopicRouteData getDefaultTopicRouteInfoFromNameServer(String topic, long timeoutMillis)
             throws MQClientException, InterruptedException, SQLException;
 
-    TopicRouteData getTopicRouteInfoFromNameServer(String topic, int timeoutMillis)
+    TopicRouteData getTopicRouteInfoFromNameServer(String topic, long timeoutMillis)
             throws MQClientException, InterruptedException, SQLException;
 
-    TopicRouteData getTopicRouteInfoFromNameServer(String topic, int timeoutMillis,
+    TopicRouteData getTopicRouteInfoFromNameServer(String topic, long timeoutMillis,
                                                    boolean allowTopicNotExist) throws SQLException;
 
     void checkClientInBroker(String consumerGroup,
                              String clientId, SubscriptionData subscriptionData,
-                             int timeoutMillis) throws MQClientException, SQLException;
+                             long timeoutMillis) throws MQClientException, SQLException;
 
     List<String> getConsumerIdListByGroup(String consumerGroup,
-                                          int timeoutMillis) throws SQLException;
+                                          long timeoutMillis) throws SQLException;
 
     //    public ConsumerRunningInfo getConsumerRunningInfo(final String addr, String consumerGroup, String clientId,
 //                                                      boolean jstack,
@@ -124,31 +125,31 @@ public interface MQClientAPI {
     void consumerSendMessageBack(MessageExt msg,
                                  String consumerGroup,
                                  int delayLevel,
-                                 int timeoutMillis,
+                                 long timeoutMillis,
                                  int maxConsumeRetryTimes) throws SQLException;
 
     void shutdown();
 
     PullResult pullMessage(PullMessageRequestHeader requestHeader,
-                           int timeoutMillis,
+                           long timeoutMillis,
                            CommunicationMode communicationMode,
                            PullCallback pullCallback) throws MQBrokerException, SQLException;
 
     long queryConsumerOffset(QueryConsumerOffsetRequestHeader requestHeader,
-                             int timeoutMillis) throws MQBrokerException, SQLException;
+                             long timeoutMillis) throws MQBrokerException, SQLException;
 
     void updateConsumerOffset(UpdateConsumerOffsetRequestHeader requestHeader,
-                              int timeoutMillis) throws MQBrokerException, SQLException;
+                              long timeoutMillis) throws MQBrokerException, SQLException;
 
     long searchOffset(String topic, int queueId, long timestamp,
-                      int timeoutMillis) throws MQBrokerException, SQLException;
+                      long timeoutMillis) throws MQBrokerException, SQLException;
 
-    long getMaxOffset(String topic, int queueId, int timeoutMillis) throws SQLException;
+    long getMaxOffset(String topic, int queueId, long timeoutMillis) throws SQLException;
 
-    long getMinOffset(String topic, int queueId, int timeoutMillis) throws SQLException;
+    long getMinOffset(String topic, int queueId, long timeoutMillis) throws SQLException;
 
     long getEarliestMsgStoretime(String topic, int queueId,
-                                 int timeoutMillis) throws SQLException, MQBrokerException;
+                                 long timeoutMillis) throws SQLException, MQBrokerException;
 
     boolean tryLock(String lockId, String lockValue, int timeout);
 
