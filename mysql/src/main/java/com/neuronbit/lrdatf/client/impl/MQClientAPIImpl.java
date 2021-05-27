@@ -11,11 +11,15 @@ import com.neuronbit.lrdatf.client.producer.SendCallback;
 import com.neuronbit.lrdatf.client.producer.SendResult;
 import com.neuronbit.lrdatf.client.producer.SendStatus;
 import com.neuronbit.lrdatf.client.producer.TopicPublishInfo;
+import com.neuronbit.lrdatf.common.MixAll;
 import com.neuronbit.lrdatf.common.constant.LoggerName;
 import com.neuronbit.lrdatf.common.message.Message;
 import com.neuronbit.lrdatf.common.message.MessageClientIDSetter;
 import com.neuronbit.lrdatf.common.message.MessageExt;
+import com.neuronbit.lrdatf.common.message.MessageQueue;
 import com.neuronbit.lrdatf.common.protocol.ResponseCode;
+import com.neuronbit.lrdatf.common.protocol.body.LockBatchRequestBody;
+import com.neuronbit.lrdatf.common.protocol.body.UnlockBatchRequestBody;
 import com.neuronbit.lrdatf.common.protocol.header.PullMessageRequestHeader;
 import com.neuronbit.lrdatf.common.protocol.header.QueryConsumerOffsetRequestHeader;
 import com.neuronbit.lrdatf.common.protocol.header.SendMessageRequestHeader;
@@ -40,13 +44,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.neuronbit.lrdatf.remoting.common.RemotingUtil.string2InetAddress;
 
 public class MQClientAPIImpl implements MQClientAPI {
     private final Logger log = LoggerFactory.getLogger(LoggerName.CLIENT_LOGGER_NAME);
+    protected final static int DLQ_NUMS_PER_GROUP = 1;
+    private final Random random = new Random(System.currentTimeMillis());
     private ClientConfig clientConfig;
     private DataSource pool;
 
@@ -272,8 +277,9 @@ public class MQClientAPIImpl implements MQClientAPI {
             connection.setAutoCommit(false);
 
             statement = connection.prepareStatement("insert into message_" + msg.getTopic() + "_" + queueId
-                    + "(topic, `keys`, tags, body, queue_id, born_timestamp, born_host, msg_id, properties, max_recon_times, recon_times, producer_group, store_timestamp) values(" +
-                    "?,?,?,?,?,?,?,?,?,?,?,?, unix_timestamp())");
+                    + "(topic, `keys`, tags, body, queue_id, born_timestamp, born_host, msg_id," +
+                    " properties, max_recon_times, recon_times, producer_group, store_timestamp)" +
+                    " values(?,?,?,?,?,?,?,?,?,?,?,?, unix_timestamp())");
             statement.setString(1, msg.getTopic());
             statement.setString(2, msg.getKeys());
             statement.setString(3, msg.getTags());
@@ -506,11 +512,11 @@ public class MQClientAPIImpl implements MQClientAPI {
         List<String> result = new ArrayList<>();
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
-            statement = connection.prepareStatement("select client_id from consumer_data where group_name=?");
+            statement = connection.prepareStatement("select distinct client_id from consumer_data where group_name=?");
             statement.setString(1, consumerGroup);
             statement.setQueryTimeout((int) Duration.ofMillis(timeoutMillis).getSeconds());
             final ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 result.add(resultSet.getString("client_id"));
             }
         } finally {
@@ -637,10 +643,18 @@ public class MQClientAPIImpl implements MQClientAPI {
         try {
             connection.setAutoCommit(false);
 
-            statement = connection.prepareStatement("insert into message_" + msg.getTopic()
-                    + "(topic, keys, tags, body, queue_id, born_timestamp, born_host, msg_id," +
+            String newTopic = MixAll.getRetryTopic(consumerGroup);
+            int queueIdInt = Math.abs(this.random.nextInt() % 99999999) % 1/*subscriptionGroupConfig.getRetryQueueNums()*/;
+
+            if (msg.getReconsumeTimes() >= maxConsumeRetryTimes) {
+                newTopic = MixAll.getDLQTopic(consumerGroup);
+                queueIdInt = Math.abs(this.random.nextInt() % 99999999) % DLQ_NUMS_PER_GROUP;
+            }
+
+            statement = connection.prepareStatement("insert into message_" + newTopic + "_" + queueIdInt
+                    + "(topic, `keys`, tags, body, queue_id, born_timestamp, born_host, msg_id," +
                     " properties, max_recon_times, recon_times, consumer_group, store_timestamp)" +
-                    " values(?,?,?,?,?,?,?,?,?,?,?, unix_timestamp())");
+                    " values(?,?,?,?,?,?,?,?,?,?,?,?, unix_timestamp())");
             statement.setString(1, msg.getTopic());
             statement.setString(2, msg.getKeys());
             statement.setString(3, msg.getTags());
@@ -651,7 +665,7 @@ public class MQClientAPIImpl implements MQClientAPI {
             statement.setString(8, msg.getMsgId());
             statement.setString(9, JSON.toJSONString(msg.getProperties()));
             statement.setInt(10, maxConsumeRetryTimes);
-            statement.setInt(11, msg.getReconsumeTimes());
+            statement.setInt(11, msg.getReconsumeTimes() + 1);
             statement.setString(12, consumerGroup);
             statement.setQueryTimeout((int) Duration.ofMillis(timeoutMillis).getSeconds());
             statement.execute();
@@ -972,17 +986,119 @@ public class MQClientAPIImpl implements MQClientAPI {
     }
 
     @Override
-    public boolean tryLock(String lockId, String lockValue, int timeout) {
+    public Set<MessageQueue> lockBatchMQ(final LockBatchRequestBody requestBody, final long timeoutMillis) {
+        final int timeout = (int) Duration.ofMillis(timeoutMillis).getSeconds();
+        final String clientId = requestBody.getClientId();
+        final String consumerGroup = requestBody.getConsumerGroup();
+        final Set<MessageQueue> mqSet = requestBody.getMqSet();
+        Set<MessageQueue> lockOKMQSet = new HashSet<>(mqSet.size());
+
+        try (Connection connection = pool.getConnection()) {
+            PreparedStatement statement;
+            for (MessageQueue messageQueue : mqSet) {
+                String lockId = consumerGroup + "_" + messageQueue.getQueueId();
+
+                statement = connection.prepareStatement("update lock_table " +
+                        " set lock_value=?, lock_timestamp=unix_timestamp()" +
+                        " where lock_id=? and (lock_value is null or lock_value=? or lock_timestamp < (unix_timestamp()- ?))");
+                statement.setString(1, clientId);
+                statement.setString(2, lockId);
+                statement.setString(3, clientId);
+                // TODO: 2021/5/21 read lock timeout from config
+                statement.setLong(4, Duration.ofMinutes(60).getSeconds());
+                statement.setQueryTimeout(timeout);
+                try {
+                    final int affectedRows = statement.executeUpdate();
+                    if (affectedRows == 1) {
+                        lockOKMQSet.add(messageQueue);
+                        continue;
+                    }
+                } catch (Exception e) {
+                    log.debug("try to lock {} by update failed", lockId, e);
+                } finally {
+                    if (null != statement) {
+                        statement.close();
+                    }
+                }
+
+                statement = connection.prepareStatement("insert into lock_table (lock_id, lock_value, lock_timestamp)" +
+                        " values(?,?, unix_timestamp())");
+                statement.setString(1, lockId);
+                statement.setString(2, clientId);
+                statement.setQueryTimeout(timeout);
+                try {
+                    final int affectedRows = statement.executeUpdate();
+                    if (affectedRows == 1) {
+                        lockOKMQSet.add(messageQueue);
+                        continue;
+                    }
+                } catch (Exception e) {
+                    log.debug("try to lock {} by insert failed", lockId, e);
+                } finally {
+                    if (null != statement) {
+                        statement.close();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            log.error("try to lockBatchMQ {} failed", requestBody, e);
+        }
+
+        return lockOKMQSet;
+    }
+
+    @Override
+    public Set<MessageQueue> unlockBatchMQ(final UnlockBatchRequestBody requestBody, final long timeoutMillis, final boolean oneway) {
+        final int timeout = (int) Duration.ofMillis(timeoutMillis).getSeconds();
+        final String clientId = requestBody.getClientId();
+        final String consumerGroup = requestBody.getConsumerGroup();
+        final Set<MessageQueue> mqSet = requestBody.getMqSet();
+        Set<MessageQueue> lockOKMQSet = new HashSet<>(mqSet.size());
+
+        try (Connection connection = pool.getConnection()) {
+            PreparedStatement statement;
+            for (MessageQueue messageQueue : mqSet) {
+                String lockId = consumerGroup + "_" + messageQueue.getQueueId();
+                statement = connection.prepareStatement("update lock_table " +
+                        " set lock_value=null, lock_timestamp=0" +
+                        " where lock_id=? and lock_value=?");
+                statement.setString(1, lockId);
+                statement.setString(2, clientId);
+                statement.setQueryTimeout(timeout);
+                try {
+                    final int affectedRows = statement.executeUpdate();
+                    if (affectedRows == 1) {
+                        lockOKMQSet.add(messageQueue);
+                    }
+                    continue;
+                } catch (Exception e) {
+                    log.debug("try to unlock {} by update failed", lockId, e);
+                } finally {
+                    if (null != statement) {
+                        statement.close();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            log.error("try to unlockBatchMQ {} failed", requestBody, e);
+        }
+
+        return lockOKMQSet;
+    }
+
+    @Override
+    public boolean tryLock(String lockId, String lockValue, long timeoutMillis) {
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
             statement = connection.prepareStatement("update lock_table " +
                     " set lock_value=?, lock_timestamp=unix_timestamp()" +
-                    " where lock_id=? and (lock_value is null or lock_timestamp < (unix_timestamp()- ?))");
+                    " where lock_id=? and (lock_value is null or lock_value=? or lock_timestamp < (unix_timestamp()- ?))");
             statement.setString(1, lockValue);
             statement.setString(2, lockId);
+            statement.setString(3, lockValue);
             // TODO: 2021/5/21 read lock timeout from config
-            statement.setLong(3, Duration.ofMinutes(5).getSeconds());
-            statement.setQueryTimeout(timeout);
+            statement.setLong(4, Duration.ofMinutes(5).getSeconds());
+            statement.setQueryTimeout((int) Duration.ofMillis(timeoutMillis).getSeconds());
             final int affectedRows = statement.executeUpdate();
             return affectedRows == 1;
         } catch (SQLException e) {
@@ -1000,7 +1116,7 @@ public class MQClientAPIImpl implements MQClientAPI {
     }
 
     @Override
-    public boolean unlock(String lockId, String lockValue, int timeout) {
+    public boolean unlock(String lockId, String lockValue, long timeoutMillis) {
         PreparedStatement statement = null;
         try (Connection connection = pool.getConnection()) {
             statement = connection.prepareStatement("update lock_table " +
@@ -1008,7 +1124,7 @@ public class MQClientAPIImpl implements MQClientAPI {
                     " where lock_id=? and lock_value=?");
             statement.setString(1, lockId);
             statement.setString(2, lockValue);
-            statement.setQueryTimeout(timeout);
+            statement.setQueryTimeout((int) Duration.ofMillis(timeoutMillis).getSeconds());
             final int affectedRows = statement.executeUpdate();
             return affectedRows == 1;
         } catch (SQLException e) {

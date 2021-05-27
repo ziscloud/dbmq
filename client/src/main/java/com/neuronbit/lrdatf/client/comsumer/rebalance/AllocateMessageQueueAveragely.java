@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.stream.Collectors.toSet;
+
 /**
  * Average Hashing queue algorithm
  */
@@ -44,7 +46,7 @@ public class AllocateMessageQueueAveragely implements AllocateMessageQueueStrate
             throw new IllegalArgumentException("cidAll is null or cidAll empty");
         }
 
-        List<MessageQueue> result = new ArrayList<MessageQueue>();
+        List<MessageQueue> result = new ArrayList<>();
         if (!cidAll.contains(currentCID)) {
             log.info("[BUG] ConsumerGroup: {} The consumerId: {} not in cidAll: {}",
                     consumerGroup,
@@ -63,6 +65,9 @@ public class AllocateMessageQueueAveragely implements AllocateMessageQueueStrate
         for (int i = 0; i < range; i++) {
             result.add(mqAll.get((startIndex + i) % mqAll.size()));
         }
+        log.info("allocate message queue {} to consumer {}",
+                result.stream().map(mq -> mq.getTopic() + ":" + mq.getQueueId()).collect(toSet()),
+                currentCID);
         return result;
     }
 

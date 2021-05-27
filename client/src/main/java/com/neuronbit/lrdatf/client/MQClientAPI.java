@@ -10,6 +10,9 @@ import com.neuronbit.lrdatf.client.producer.SendResult;
 import com.neuronbit.lrdatf.client.producer.TopicPublishInfo;
 import com.neuronbit.lrdatf.common.message.Message;
 import com.neuronbit.lrdatf.common.message.MessageExt;
+import com.neuronbit.lrdatf.common.message.MessageQueue;
+import com.neuronbit.lrdatf.common.protocol.body.LockBatchRequestBody;
+import com.neuronbit.lrdatf.common.protocol.body.UnlockBatchRequestBody;
 import com.neuronbit.lrdatf.common.protocol.header.PullMessageRequestHeader;
 import com.neuronbit.lrdatf.common.protocol.header.QueryConsumerOffsetRequestHeader;
 import com.neuronbit.lrdatf.common.protocol.header.SendMessageRequestHeader;
@@ -23,6 +26,7 @@ import com.neuronbit.lrdatf.exception.RemotingTooMuchRequestException;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 public interface MQClientAPI {
 
@@ -151,9 +155,13 @@ public interface MQClientAPI {
     long getEarliestMsgStoretime(String topic, int queueId,
                                  long timeoutMillis) throws SQLException, MQBrokerException;
 
-    boolean tryLock(String lockId, String lockValue, int timeout);
+    Set<MessageQueue> lockBatchMQ(LockBatchRequestBody requestBody, long timeoutMillis);
 
-    boolean unlock(String lockId, String lockValue, int timeout);
+    Set<MessageQueue> unlockBatchMQ(UnlockBatchRequestBody requestBody, long timeoutMillis, boolean oneway);
+
+    boolean tryLock(String lockId, String lockValue, long timeoutMillis);
+
+    boolean unlock(String lockId, String lockValue, long timeoutMillis);
 
     void scanNotActiveProducer();
 

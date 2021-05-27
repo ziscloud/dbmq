@@ -186,7 +186,7 @@ public class DefaultMQPushConsumerImpl implements MQConsumerInner {
             return;
         }
 
-        pullRequest.getProcessQueue().setLastPullTimestamp(System.currentTimeMillis());
+        processQueue.setLastPullTimestamp(System.currentTimeMillis());
 
         try {
             this.makeSureStateOK();

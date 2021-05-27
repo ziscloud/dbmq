@@ -74,7 +74,6 @@ public class ConsumeMessageOrderlyService implements ConsumeMessageService {
 
     public void start() {
         if (MessageModel.CLUSTERING.equals(ConsumeMessageOrderlyService.this.defaultMQPushConsumerImpl.messageModel())) {
-            // TODO: 2021/5/19 why?
             this.scheduledExecutorService.scheduleAtFixedRate(ConsumeMessageOrderlyService.this::lockMQPeriodically,
                     1000 * 1,
                     ProcessQueue.REBALANCE_LOCK_INTERVAL,
@@ -233,7 +232,6 @@ public class ConsumeMessageOrderlyService implements ConsumeMessageService {
         }
 
         this.scheduledExecutorService.schedule(new Runnable() {
-
             @Override
             public void run() {
                 ConsumeMessageOrderlyService.this.submitConsumeRequest(null, processQueue, messageQueue, true);

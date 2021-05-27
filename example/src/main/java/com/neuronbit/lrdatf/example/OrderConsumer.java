@@ -2,11 +2,11 @@ package com.neuronbit.lrdatf.example;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.neuronbit.lrdatf.client.comsumer.DefaultMQPushConsumer;
-import com.neuronbit.lrdatf.client.comsumer.listener.ConsumeConcurrentlyStatus;
-import com.neuronbit.lrdatf.client.comsumer.listener.MessageListenerConcurrently;
+import com.neuronbit.lrdatf.client.comsumer.listener.ConsumeOrderlyStatus;
+import com.neuronbit.lrdatf.client.comsumer.listener.MessageListenerOrderly;
 import com.neuronbit.lrdatf.exception.MQClientException;
 
-public class Consumer {
+public class OrderConsumer {
 
     public static void main(String[] args) throws InterruptedException, MQClientException {
         DruidDataSource dataSource = new DruidDataSource();
@@ -46,13 +46,14 @@ public class Consumer {
 
         consumer.setPullInterval(1000 * 1);
         //consumer.setPersistConsumerOffsetInterval();
+        consumer.setMaxReconsumeTimes(3);
 
         // Subscribe one more more topics to consume.
         consumer.subscribe("TopicTest", "*");
         // Register callback to execute on arrival of messages fetched from brokers.
-        consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
+        consumer.registerMessageListener((MessageListenerOrderly) (msgs, context) -> {
             System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
-            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+            return ConsumeOrderlyStatus.SUCCESS;
         });
 
         //Launch the consumer instance.
