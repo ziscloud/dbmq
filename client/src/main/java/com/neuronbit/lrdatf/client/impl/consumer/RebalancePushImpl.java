@@ -16,10 +16,10 @@
  */
 package com.neuronbit.lrdatf.client.impl.consumer;
 
-import com.neuronbit.lrdatf.client.comsumer.AllocateMessageQueueStrategy;
-import com.neuronbit.lrdatf.client.comsumer.MQClientInstance;
-import com.neuronbit.lrdatf.client.comsumer.store.OffsetStore;
-import com.neuronbit.lrdatf.client.comsumer.store.ReadOffsetType;
+import com.neuronbit.lrdatf.client.consumer.AllocateMessageQueueStrategy;
+import com.neuronbit.lrdatf.client.consumer.store.OffsetStore;
+import com.neuronbit.lrdatf.client.consumer.store.ReadOffsetType;
+import com.neuronbit.lrdatf.client.impl.factory.MQClientInstance;
 import com.neuronbit.lrdatf.common.MixAll;
 import com.neuronbit.lrdatf.common.UtilAll;
 import com.neuronbit.lrdatf.common.consumer.ConsumeFromWhere;

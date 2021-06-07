@@ -1,9 +1,9 @@
 package com.neuronbit.lrdatf.example;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.neuronbit.lrdatf.client.comsumer.DefaultMQPushConsumer;
-import com.neuronbit.lrdatf.client.comsumer.listener.ConsumeOrderlyStatus;
-import com.neuronbit.lrdatf.client.comsumer.listener.MessageListenerOrderly;
+import com.neuronbit.lrdatf.client.consumer.DefaultMQPushConsumer;
+import com.neuronbit.lrdatf.client.consumer.listener.ConsumeOrderlyStatus;
+import com.neuronbit.lrdatf.client.consumer.listener.MessageListenerOrderly;
 import com.neuronbit.lrdatf.exception.MQClientException;
 
 public class OrderConsumer {
@@ -48,7 +48,7 @@ public class OrderConsumer {
         //consumer.setPersistConsumerOffsetInterval();
         consumer.setMaxReconsumeTimes(3);
 
-        // Subscribe one more more topics to consume.
+        // Subscribe one or more topics to consume.
         consumer.subscribe("TopicTest", "*");
         // Register callback to execute on arrival of messages fetched from brokers.
         consumer.registerMessageListener((MessageListenerOrderly) (msgs, context) -> {

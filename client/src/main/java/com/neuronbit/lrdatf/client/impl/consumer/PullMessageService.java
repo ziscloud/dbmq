@@ -16,8 +16,8 @@
  */
 package com.neuronbit.lrdatf.client.impl.consumer;
 
-import com.neuronbit.lrdatf.client.comsumer.MQClientInstance;
-import com.neuronbit.lrdatf.client.comsumer.MQConsumerInner;
+import com.neuronbit.lrdatf.client.consumer.MQConsumerInner;
+import com.neuronbit.lrdatf.client.impl.factory.MQClientInstance;
 import com.neuronbit.lrdatf.common.constant.LoggerName;
 import com.neuronbit.lrdatf.common.utils.ThreadUtils;
 import com.neuronbit.lrdatf.remoting.common.ServiceThread;

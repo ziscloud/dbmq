@@ -16,11 +16,11 @@
  */
 package com.neuronbit.lrdatf.client.impl.consumer;
 
-import com.neuronbit.lrdatf.client.comsumer.DefaultMQPushConsumer;
-import com.neuronbit.lrdatf.client.comsumer.listener.ConsumeOrderlyContext;
-import com.neuronbit.lrdatf.client.comsumer.listener.ConsumeOrderlyStatus;
-import com.neuronbit.lrdatf.client.comsumer.listener.ConsumeReturnType;
-import com.neuronbit.lrdatf.client.comsumer.listener.MessageListenerOrderly;
+import com.neuronbit.lrdatf.client.consumer.DefaultMQPushConsumer;
+import com.neuronbit.lrdatf.client.consumer.listener.ConsumeOrderlyContext;
+import com.neuronbit.lrdatf.client.consumer.listener.ConsumeOrderlyStatus;
+import com.neuronbit.lrdatf.client.consumer.listener.ConsumeReturnType;
+import com.neuronbit.lrdatf.client.consumer.listener.MessageListenerOrderly;
 import com.neuronbit.lrdatf.client.stats.ConsumerStatsManager;
 import com.neuronbit.lrdatf.common.MixAll;
 import com.neuronbit.lrdatf.common.ThreadFactoryImpl;

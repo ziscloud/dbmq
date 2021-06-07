@@ -16,8 +16,6 @@
  */
 package com.neuronbit.lrdatf.client.impl.producer;
 
-import com.neuronbit.lrdatf.client.producer.TopicPublishInfo;
-
 import java.util.Set;
 
 public interface MQProducerInner {

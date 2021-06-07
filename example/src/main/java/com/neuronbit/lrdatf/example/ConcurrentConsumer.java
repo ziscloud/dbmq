@@ -1,9 +1,9 @@
 package com.neuronbit.lrdatf.example;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.neuronbit.lrdatf.client.comsumer.DefaultMQPushConsumer;
-import com.neuronbit.lrdatf.client.comsumer.listener.ConsumeConcurrentlyStatus;
-import com.neuronbit.lrdatf.client.comsumer.listener.MessageListenerConcurrently;
+import com.neuronbit.lrdatf.client.consumer.DefaultMQPushConsumer;
+import com.neuronbit.lrdatf.client.consumer.listener.ConsumeConcurrentlyStatus;
+import com.neuronbit.lrdatf.client.consumer.listener.MessageListenerConcurrently;
 import com.neuronbit.lrdatf.exception.MQClientException;
 
 public class ConcurrentConsumer {

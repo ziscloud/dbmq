@@ -1,6 +1,6 @@
 package com.neuronbit.lrdatf.client;
 
-import com.neuronbit.lrdatf.client.comsumer.MQClientInstance;
+import com.neuronbit.lrdatf.client.impl.factory.MQClientInstance;
 import com.neuronbit.lrdatf.common.constant.LoggerName;
 import com.neuronbit.lrdatf.remoting.common.ServiceThread;
 import org.slf4j.Logger;

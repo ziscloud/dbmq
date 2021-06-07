@@ -16,11 +16,11 @@
  */
 package com.neuronbit.lrdatf.client.impl.consumer;
 
-import com.neuronbit.lrdatf.client.comsumer.MQClientInstance;
-import com.neuronbit.lrdatf.client.comsumer.PullCallback;
-import com.neuronbit.lrdatf.client.comsumer.PullResult;
-import com.neuronbit.lrdatf.client.comsumer.PullStatus;
+import com.neuronbit.lrdatf.client.consumer.PullCallback;
+import com.neuronbit.lrdatf.client.consumer.PullResult;
+import com.neuronbit.lrdatf.client.consumer.PullStatus;
 import com.neuronbit.lrdatf.client.impl.CommunicationMode;
+import com.neuronbit.lrdatf.client.impl.factory.MQClientInstance;
 import com.neuronbit.lrdatf.common.MixAll;
 import com.neuronbit.lrdatf.common.constant.LoggerName;
 import com.neuronbit.lrdatf.common.message.MessageAccessor;

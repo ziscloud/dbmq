@@ -10,10 +10,22 @@ repositories {
 }
 
 dependencies {
+    implementation project(":client")
+
+    compileOnly 'org.springframework:spring-context:4.3.30.RELEASE'
+    compileOnly 'org.springframework.boot:spring-boot-autoconfigure:1.5.22.RELEASE'
+    compileOnly 'org.springframework.boot:spring-boot-starter-validation:1.5.22.RELEASE'
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 }
 
 test {
-    useJUnitPlatform()
+    useJUnit()
+
+    maxHeapSize = '1G'
 }

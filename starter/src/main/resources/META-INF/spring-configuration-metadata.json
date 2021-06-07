@@ -1,0 +1,30 @@
+{
+  "groups": [
+    {
+      "name": "lrdatf",
+      "type": "com.neuronbit.lrdatf.spring.autoconfiguration.LrdatfAutoConfiguration"
+    }
+  ],
+  "properties": [
+    {
+      "name": "lrdatf.group-name",
+      "type": "java.lang.String",
+      "description": "The name of the group of consumer and producer."
+    }
+  ],
+  "hints": [
+    {
+      "name": "my-org.cli.security.required-role",
+      "values": [
+        {
+          "value": "USER",
+          "description": "Standard user role, should only have access to READ functions."
+        },
+        {
+          "value": "ADMIN",
+          "description": "Administrative user role, should only have access to READ and WRITE functions."
+        }
+      ]
+    }
+  ]
+}

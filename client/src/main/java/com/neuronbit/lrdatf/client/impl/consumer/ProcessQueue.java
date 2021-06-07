@@ -16,7 +16,7 @@
  */
 package com.neuronbit.lrdatf.client.impl.consumer;
 
-import com.neuronbit.lrdatf.client.comsumer.DefaultMQPushConsumer;
+import com.neuronbit.lrdatf.client.consumer.DefaultMQPushConsumer;
 import com.neuronbit.lrdatf.common.constant.LoggerName;
 import com.neuronbit.lrdatf.common.message.MessageAccessor;
 import com.neuronbit.lrdatf.common.message.MessageConst;
@@ -25,6 +25,7 @@ import com.neuronbit.lrdatf.common.protocol.body.ProcessQueueInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
@@ -132,7 +133,7 @@ public class ProcessQueue {
                     if (null == old) {
                         validMsgCnt++;
                         this.queueOffsetMax = msg.getQueueOffset();
-                        msgSize.addAndGet(msg.getBody().length());
+                        msgSize.addAndGet(msg.getBody().getBytes(StandardCharsets.UTF_8).length);
                     }
                 }
                 msgCount.addAndGet(validMsgCnt);

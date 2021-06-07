@@ -2,10 +2,13 @@ package com.neuronbit.lrdatf.client.impl.producer;
 
 import com.neuronbit.lrdatf.client.Validators;
 import com.neuronbit.lrdatf.client.common.ClientErrorCode;
-import com.neuronbit.lrdatf.client.comsumer.MQClientInstance;
 import com.neuronbit.lrdatf.client.impl.CommunicationMode;
 import com.neuronbit.lrdatf.client.impl.MQClientManager;
-import com.neuronbit.lrdatf.client.producer.*;
+import com.neuronbit.lrdatf.client.impl.factory.MQClientInstance;
+import com.neuronbit.lrdatf.client.producer.DefaultMQProducer;
+import com.neuronbit.lrdatf.client.producer.SendCallback;
+import com.neuronbit.lrdatf.client.producer.SendResult;
+import com.neuronbit.lrdatf.client.producer.SendStatus;
 import com.neuronbit.lrdatf.common.MixAll;
 import com.neuronbit.lrdatf.common.ServiceState;
 import com.neuronbit.lrdatf.common.help.FAQUrl;
@@ -525,5 +528,9 @@ public class DefaultMQProducerImpl implements MQProducerInner {
     @Override
     public boolean isUnitMode() {
         return this.defaultMQProducer.isUnitMode();
+    }
+
+    public MQClientInstance getmQClientFactory() {
+        return mQClientFactory;
     }
 }

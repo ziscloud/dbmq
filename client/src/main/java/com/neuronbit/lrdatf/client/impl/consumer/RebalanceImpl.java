@@ -1,7 +1,7 @@
 package com.neuronbit.lrdatf.client.impl.consumer;
 
-import com.neuronbit.lrdatf.client.comsumer.AllocateMessageQueueStrategy;
-import com.neuronbit.lrdatf.client.comsumer.MQClientInstance;
+import com.neuronbit.lrdatf.client.consumer.AllocateMessageQueueStrategy;
+import com.neuronbit.lrdatf.client.impl.factory.MQClientInstance;
 import com.neuronbit.lrdatf.common.MixAll;
 import com.neuronbit.lrdatf.common.constant.LoggerName;
 import com.neuronbit.lrdatf.common.message.MessageQueue;

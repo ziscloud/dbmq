@@ -17,15 +17,19 @@
 package com.neuronbit.lrdatf.client.impl.consumer;
 
 import com.neuronbit.lrdatf.client.Validators;
-import com.neuronbit.lrdatf.client.comsumer.*;
-import com.neuronbit.lrdatf.client.comsumer.listener.MessageListener;
-import com.neuronbit.lrdatf.client.comsumer.listener.MessageListenerConcurrently;
-import com.neuronbit.lrdatf.client.comsumer.listener.MessageListenerOrderly;
-import com.neuronbit.lrdatf.client.comsumer.store.OffsetStore;
-import com.neuronbit.lrdatf.client.comsumer.store.ReadOffsetType;
-import com.neuronbit.lrdatf.client.comsumer.store.RemoteBrokerOffsetStore;
+import com.neuronbit.lrdatf.client.consumer.DefaultMQPushConsumer;
+import com.neuronbit.lrdatf.client.consumer.MQConsumerInner;
+import com.neuronbit.lrdatf.client.consumer.PullCallback;
+import com.neuronbit.lrdatf.client.consumer.PullResult;
+import com.neuronbit.lrdatf.client.consumer.listener.MessageListener;
+import com.neuronbit.lrdatf.client.consumer.listener.MessageListenerConcurrently;
+import com.neuronbit.lrdatf.client.consumer.listener.MessageListenerOrderly;
+import com.neuronbit.lrdatf.client.consumer.store.OffsetStore;
+import com.neuronbit.lrdatf.client.consumer.store.ReadOffsetType;
+import com.neuronbit.lrdatf.client.consumer.store.RemoteBrokerOffsetStore;
 import com.neuronbit.lrdatf.client.impl.CommunicationMode;
 import com.neuronbit.lrdatf.client.impl.MQClientManager;
+import com.neuronbit.lrdatf.client.impl.factory.MQClientInstance;
 import com.neuronbit.lrdatf.client.stats.ConsumerStatsManager;
 import com.neuronbit.lrdatf.common.MixAll;
 import com.neuronbit.lrdatf.common.ServiceState;
@@ -36,6 +40,9 @@ import com.neuronbit.lrdatf.common.filter.FilterAPI;
 import com.neuronbit.lrdatf.common.help.FAQUrl;
 import com.neuronbit.lrdatf.common.message.*;
 import com.neuronbit.lrdatf.common.protocol.NamespaceUtil;
+import com.neuronbit.lrdatf.common.protocol.body.ConsumeStatus;
+import com.neuronbit.lrdatf.common.protocol.body.ConsumerRunningInfo;
+import com.neuronbit.lrdatf.common.protocol.body.ProcessQueueInfo;
 import com.neuronbit.lrdatf.common.protocol.heartbeat.ConsumeType;
 import com.neuronbit.lrdatf.common.protocol.heartbeat.MessageModel;
 import com.neuronbit.lrdatf.common.protocol.heartbeat.SubscriptionData;
@@ -926,6 +933,41 @@ public class DefaultMQPushConsumerImpl implements MQConsumerInner {
     @Override
     public boolean isUnitMode() {
         return this.defaultMQPushConsumer.isUnitMode();
+    }
+
+    @Override
+    public ConsumerRunningInfo consumerRunningInfo() {
+        ConsumerRunningInfo info = new ConsumerRunningInfo();
+
+        Properties prop = MixAll.object2Properties(this.defaultMQPushConsumer);
+
+        prop.put(ConsumerRunningInfo.PROP_CONSUME_ORDERLY, String.valueOf(this.consumeOrderly));
+        prop.put(ConsumerRunningInfo.PROP_THREADPOOL_CORE_SIZE, String.valueOf(this.consumeMessageService.getCorePoolSize()));
+        prop.put(ConsumerRunningInfo.PROP_CONSUMER_START_TIMESTAMP, String.valueOf(this.consumerStartTimestamp));
+
+        info.setProperties(prop);
+
+        Set<SubscriptionData> subSet = this.subscriptions();
+        info.getSubscriptionSet().addAll(subSet);
+
+        Iterator<Entry<MessageQueue, ProcessQueue>> it = this.rebalanceImpl.getProcessQueueTable().entrySet().iterator();
+        while (it.hasNext()) {
+            Entry<MessageQueue, ProcessQueue> next = it.next();
+            MessageQueue mq = next.getKey();
+            ProcessQueue pq = next.getValue();
+
+            ProcessQueueInfo pqinfo = new ProcessQueueInfo();
+            pqinfo.setCommitOffset(this.offsetStore.readOffset(mq, ReadOffsetType.MEMORY_FIRST_THEN_STORE));
+            pq.fillProcessQueueInfo(pqinfo);
+            info.getMqTable().put(mq, pqinfo);
+        }
+
+        for (SubscriptionData sd : subSet) {
+            ConsumeStatus consumeStatus = this.mQClientFactory.getConsumerStatsManager().consumeStatus(this.groupName(), sd.getTopic());
+            info.getStatusTable().put(sd.getTopic(), consumeStatus);
+        }
+
+        return info;
     }
 
     // TODO: 2021/5/17 这些数据是提供给adminbroker的
