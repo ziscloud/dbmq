@@ -11,7 +11,7 @@ import java.time.temporal.ChronoUnit;
 @Data
 public class ConfigProperties {
     private String groupName;
-    private String clientIP;
+    private String clientIp;
     private String instanceName;
 
     @DurationUnit(ChronoUnit.SECONDS)

@@ -1,9 +1,9 @@
 package com.neuronbit.lrdatf.spring.autoconfiguration;
 
-import com.neuronbit.lrdatf.client.consumer.AllocateMessageQueueStrategy;
 import com.neuronbit.lrdatf.common.consumer.ConsumeFromWhere;
 import com.neuronbit.lrdatf.common.protocol.heartbeat.MessageModel;
 import com.neuronbit.lrdatf.spring.convert.DurationUnit;
+import com.neuronbit.lrdatf.spring.enums.AllocateMessageQueueMode;
 import lombok.Data;
 
 import java.time.Duration;
@@ -16,7 +16,7 @@ public class ConsumerProperties {
     private Integer maxReconsumeTimes;
     private ConsumeFromWhere consumeFromWhere;
     private Integer adjustThreadPoolNumsThreshold;
-    private AllocateMessageQueueStrategy allocateMessageQueueStrategy;
+    private AllocateMessageQueueMode allocateMessageQueueStrategy;
     @DurationUnit(ChronoUnit.MILLIS)
     private Duration awaitTerminationMillisWhenShutdown;
     private Integer consumeConcurrentlyMaxSpan;

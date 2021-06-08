@@ -10,19 +10,195 @@
       "name": "lrdatf.group-name",
       "type": "java.lang.String",
       "description": "The name of the group of consumer and producer."
+    },
+    {
+      "name": "lrdatf.group-name",
+      "type": "java.lang.String",
+      "description": "group name"
+    },
+    {
+      "name": "lrdatf.client-ip",
+      "type": "java.lang.String",
+      "description": "client ip"
+    },
+    {
+      "name": "lrdatf.instance-name",
+      "type": "java.lang.String",
+      "description": "instance name"
+    },
+    {
+      "name": "lrdatf.heartbeat-broker-interval",
+      "type": "java.time.Duration",
+      "description": "heartbeat broker interval"
+    },
+    {
+      "name": "lrdatf.persist-consumer-offset-interval",
+      "type": "java.time.Duration",
+      "description": "persist consumer offset interval"
+    },
+    {
+      "name": "lrdatf.poll-name-server-interval",
+      "type": "java.time.Duration",
+      "description": "poll name server interval"
+    },
+    {
+      "name": "lrdatf.pull-time-delay-mills-when-exception",
+      "type": "java.time.Duration",
+      "description": "pull time delay mills when exception"
+    },
+    {
+      "name": "lrdatf.consumer.pull-interval",
+      "type": "java.time.Duration",
+      "description": "pull interval"
+    },
+    {
+      "name": "lrdatf.consumer.max-reconsume-times",
+      "type": "java.lang.Integer",
+      "description": "max reconsume times"
+    },
+    {
+      "name": "lrdatf.consumer.consume-from-where",
+      "type": "com.neuronbit.lrdatf.common.consumer.ConsumeFromWhere",
+      "description": "consume from where"
+    },
+    {
+      "name": "lrdatf.consumer.adjust-thread-pool-nums-threshold",
+      "type": "java.lang.Integer",
+      "description": "adjust thread pool nums threshold"
+    },
+    {
+      "name": "lrdatf.consumer.allocate-message-queue-strategy",
+      "type": "com.neuronbit.lrdatf.spring.enums.AllocateMessageQueueMode",
+      "description": "allocate message queue strategy"
+    },
+    {
+      "name": "lrdatf.consumer.await-termination-millis-when-shutdown",
+      "type": "java.time.Duration",
+      "description": "await termination millis when shutdown"
+    },
+    {
+      "name": "lrdatf.consumer.consume-concurrently-max-span",
+      "type": "java.lang.Integer",
+      "description": "consume concurrently max span"
+    },
+    {
+      "name": "lrdatf.consumer.consume-message-batch-max-size",
+      "type": "java.lang.Integer",
+      "description": "consume message batch max size"
+    },
+    {
+      "name": "lrdatf.consumer.consume-thread-max",
+      "type": "java.lang.Integer",
+      "description": "consume thread max"
+    },
+    {
+      "name": "lrdatf.consumer.consume-thread-min",
+      "type": "java.lang.Integer",
+      "description": "consume thread min"
+    },
+    {
+      "name": "lrdatf.consumer.consume-timeout",
+      "type": "java.time.Duration",
+      "description": "consume timeout"
+    },
+    {
+      "name": "lrdatf.consumer.consume-timestamp",
+      "type": "java.lang.String",
+      "description": "consume timestamp"
+    },
+    {
+      "name": "lrdatf.consumer.message-model",
+      "type": "com.neuronbit.lrdatf.common.protocol.heartbeat.MessageModel",
+      "description": "message model"
+    },
+    {
+      "name": "lrdatf.consumer.pull-batch-size",
+      "type": "java.lang.Integer",
+      "description": "pull batch size"
+    },
+    {
+      "name": "lrdatf.consumer.pull-threshold-for-queue",
+      "type": "java.lang.Integer",
+      "description": "pull threshold for queue"
+    },
+    {
+      "name": "lrdatf.consumer.pull-threshold-for-topic",
+      "type": "java.lang.Integer",
+      "description": "pull threshold for topic"
+    },
+    {
+      "name": "lrdatf.consumer.pull-threshold-size-for-queue",
+      "type": "java.lang.Integer",
+      "description": "pull threshold size for queue"
+    },
+    {
+      "name": "lrdatf.consumer.pull-threshold-size-for-topic",
+      "type": "java.lang.Integer",
+      "description": "pull threshold size for topic"
+    },
+    {
+      "name": "lrdatf.consumer.suspend-current-queue-time-millis",
+      "type": "java.time.Duration",
+      "description": "suspend current queue time millis"
+    },
+    {
+      "name": "lrdatf.producer.default-topic-queue-nums",
+      "type": "java.lang.Integer",
+      "description": "default topic queue nums"
+    },
+    {
+      "name": "lrdatf.producer.retry-times-when-send-failed",
+      "type": "java.lang.Integer",
+      "description": "retry times when send failed"
+    },
+    {
+      "name": "lrdatf.producer.send-msg-timeout",
+      "type": "java.time.Duration",
+      "description": "send msg timeout"
+    },
+    {
+      "name": "lrdatf.producer.client-callback-executor-threads",
+      "type": "java.lang.Integer",
+      "description": "client callback executor threads"
     }
   ],
   "hints": [
     {
-      "name": "my-org.cli.security.required-role",
+      "name": "lrdatf.consumer.consume-from-where",
       "values": [
         {
-          "value": "USER",
-          "description": "Standard user role, should only have access to READ functions."
+          "value": "CONSUME_FROM_LAST_OFFSET",
+          "description": "CONSUME_FROM_LAST_OFFSET will ignore the historical messages, and consume anything produced after that."
         },
         {
-          "value": "ADMIN",
-          "description": "Administrative user role, should only have access to READ and WRITE functions."
+          "value": "CONSUME_FROM_FIRST_OFFSET",
+          "description": "CONSUME_FROM_FIRST_OFFSET will consume every message existed in the Broker."
+        },
+        {
+          "value": "CONSUME_FROM_TIMESTAMP",
+          "description": "You can use CONSUME_FROM_TIMESTAMP to consume messages produced after the specified timestamp."
+        }
+      ]
+    },
+    {
+      "name": "lrdatf.consumer.allocate-message-queue-strategy",
+      "values": [
+        {
+          "value": "AVG",
+          "description": "Average Hashing queue algorithm"
+        }
+      ]
+    },
+    {
+      "name": "lrdatf.consumer.message-model",
+      "values": [
+        {
+          "value": "BROADCASTING",
+          "description": "broadcast"
+        },
+        {
+          "value": "CLUSTERING",
+          "description": "clustering"
         }
       ]
     }

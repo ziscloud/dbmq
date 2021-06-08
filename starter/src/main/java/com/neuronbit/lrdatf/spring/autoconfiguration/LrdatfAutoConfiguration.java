@@ -37,7 +37,7 @@ public class LrdatfAutoConfiguration {
             consumer.setAdjustThreadPoolNumsThreshold(properties.getConsumer().getAdjustThreadPoolNumsThreshold());
         }
         if (properties.getConsumer().getAllocateMessageQueueStrategy() != null) {
-            consumer.setAllocateMessageQueueStrategy(properties.getConsumer().getAllocateMessageQueueStrategy());
+            consumer.setAllocateMessageQueueStrategy(properties.getConsumer().getAllocateMessageQueueStrategy().getInstance());
         }
         if (properties.getConsumer().getAwaitTerminationMillisWhenShutdown() != null) {
             consumer.setAwaitTerminationMillisWhenShutdown(properties.getConsumer().getAwaitTerminationMillisWhenShutdown().toMillis());
@@ -82,8 +82,8 @@ public class LrdatfAutoConfiguration {
             consumer.setSuspendCurrentQueueTimeMillis(properties.getConsumer().getSuspendCurrentQueueTimeMillis().toMillis());
         }
 
-        if (properties.getClientIP() != null) {
-            consumer.setClientIP(properties.getClientIP());
+        if (properties.getClientIp() != null) {
+            consumer.setClientIP(properties.getClientIp());
         }
         if (properties.getInstanceName() != null) {
             consumer.setInstanceName(properties.getInstanceName());
@@ -116,8 +116,8 @@ public class LrdatfAutoConfiguration {
         final DefaultMQProducer producer = new DefaultMQProducer(properties.getGroupName());
         producer.setDataSource(dataSource);
 
-        if (properties.getClientIP() != null) {
-            producer.setClientIP(properties.getClientIP());
+        if (properties.getClientIp() != null) {
+            producer.setClientIP(properties.getClientIp());
         }
         if (properties.getInstanceName() != null) {
             producer.setInstanceName(properties.getInstanceName());
