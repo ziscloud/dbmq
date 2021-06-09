@@ -2,9 +2,9 @@ package com.neuronbit.lrdatf.spring.autoconfiguration;
 
 import com.neuronbit.lrdatf.common.consumer.ConsumeFromWhere;
 import com.neuronbit.lrdatf.common.protocol.heartbeat.MessageModel;
-import com.neuronbit.lrdatf.spring.convert.DurationUnit;
 import com.neuronbit.lrdatf.spring.enums.AllocateMessageQueueMode;
 import lombok.Data;
+import org.springframework.boot.convert.DurationUnit;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;

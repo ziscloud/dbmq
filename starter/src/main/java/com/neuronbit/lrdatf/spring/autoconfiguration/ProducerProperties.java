@@ -1,7 +1,7 @@
 package com.neuronbit.lrdatf.spring.autoconfiguration;
 
-import com.neuronbit.lrdatf.spring.convert.DurationUnit;
 import lombok.Data;
+import org.springframework.boot.convert.DurationUnit;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;

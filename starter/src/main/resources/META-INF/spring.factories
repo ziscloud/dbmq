@@ -1,3 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.neuronbit.lrdatf.spring.autoconfiguration.LrdatfAutoConfiguration,
-com.neuronbit.lrdatf.spring.convert.ConversionAutoConfiguration
+com.neuronbit.lrdatf.spring.autoconfiguration.LrdatfAutoConfiguration

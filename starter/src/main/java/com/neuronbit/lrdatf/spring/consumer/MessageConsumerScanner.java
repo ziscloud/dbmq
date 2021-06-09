@@ -1,6 +1,7 @@
 package com.neuronbit.lrdatf.spring.consumer;
 
 import com.neuronbit.lrdatf.client.consumer.DefaultMQPushConsumer;
+import com.neuronbit.lrdatf.client.producer.DefaultMQProducer;
 import com.neuronbit.lrdatf.exception.MQClientException;
 import com.neuronbit.lrdatf.spring.ann.MessageConsumer;
 import com.neuronbit.lrdatf.spring.ann.MessageTopic;
@@ -21,14 +22,32 @@ import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 @Slf4j
 public class MessageConsumerScanner implements ApplicationListener<ContextRefreshedEvent> {
-    private DefaultMQPushConsumer consumer;
+    private final DefaultMQPushConsumer consumer;
+    private final DefaultMQProducer producer;
 
-    public MessageConsumerScanner(DefaultMQPushConsumer consumer) {
+    public MessageConsumerScanner(DefaultMQPushConsumer consumer, DefaultMQProducer producer) {
         this.consumer = consumer;
+        this.producer = producer;
     }
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        scanMessageListener(event);
+
+        start();
+    }
+
+    private void start() {
+        try {
+            consumer.start();
+            producer.start();
+        } catch (MQClientException e) {
+            log.error("start consumer or producer failed", e);
+            System.exit(1);
+        }
+    }
+
+    private void scanMessageListener(ContextRefreshedEvent event) {
         ApplicationContext context = event.getApplicationContext();
         final String listenerPackage = context.getEnvironment().getProperty("lrdatf.listener.package");
         if (isEmpty(listenerPackage)) {
@@ -75,6 +94,7 @@ public class MessageConsumerScanner implements ApplicationListener<ContextRefres
                     consumer.subscribe(topic, null);
                 } catch (MQClientException e) {
                     log.error("subscribe topic {} failed", topic, e);
+                    System.exit(1);
                     continue;
                 }
                 final MessageListenerConcurrentlyImpl messageListener = (MessageListenerConcurrentlyImpl) consumer.getMessageListener();
