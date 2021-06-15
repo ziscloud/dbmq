@@ -1,0 +1,32 @@
+dist: trusty
+
+notifications:
+  email:
+    recipients:
+      - neurionbit@qq.com
+  on_success: change
+  on_failure: always
+
+language: java
+
+jdk:
+  - oraclejdk8
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+matrix:
+  include:
+    # On OSX, run with default JDK only.
+    # - os: osx
+    # On Linux, run with specific JDKs only.
+    - os: linux
+      env: CUSTOM_JDK="oraclejdk8"
+
+script:
+  - travis_retry ./gradlew build --scan -s

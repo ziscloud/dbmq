@@ -1,10 +1,14 @@
 # DBMQ
+----------
+[![GitHub issues](https://img.shields.io/github/issues/ziscloud/dbmq.git)](https://github.com/ziscloud/dbmq.git/issues)
+[![GitHub stars](https://img.shields.io/github/stars/ziscloud/dbmq.git)](https://github.com/ziscloud/dbmq.git/stargazers)
+[![GitHub license](https://img.shields.io/github/license/ziscloud/dbmq.git)](https://github.com/ziscloud/dbmq.git)
 
 DBMQ is a lite message queue that use database as broker, it based on Apache RocketMQ which is a distributed messaging
 and streaming platform.
 
-# Why we create it
-
+# Why another MQ?
+----------
 In our circumstance, we need an intra-application message processing for online request handling, e.g.
 
 * we need to send an SMS to customer
@@ -22,4 +26,14 @@ We have following constraints:
   maintenance, it is not affordable for us.
 
 We need a lite weighted MQ that can be embedded into application, and we already got JAVA and database/redis, so we
-build it. 
+build it.
+
+# Contributing
+
+We always welcome new contributions, whether for trivial
+cleanups, [big new features](https://github.com/apache/rocketmq/wiki/RocketMQ-Improvement-Proposal)
+or other material rewards, more details see [here](http://rocketmq.apache.org/docs/how-to-contribute/).
+
+# License
+
+[Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html) Copyright (C) Apache Software Foundation
