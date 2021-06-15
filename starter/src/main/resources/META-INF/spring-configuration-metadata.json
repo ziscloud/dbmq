@@ -1,170 +1,170 @@
 {
   "groups": [
     {
-      "name": "lrdatf",
-      "type": "com.neuronbit.lrdatf.spring.autoconfiguration.LrdatfAutoConfiguration"
+      "name": "dbmq",
+      "type": "com.neuronbit.dbmq.spring.autoconfiguration.DBMQAutoConfiguration"
     }
   ],
   "properties": [
     {
-      "name": "lrdatf.group-name",
+      "name": "dbmq.group-name",
       "type": "java.lang.String",
       "description": "The name of the group of consumer and producer."
     },
     {
-      "name": "lrdatf.group-name",
+      "name": "dbmq.group-name",
       "type": "java.lang.String",
       "description": "group name"
     },
     {
-      "name": "lrdatf.client-ip",
+      "name": "dbmq.client-ip",
       "type": "java.lang.String",
       "description": "client ip"
     },
     {
-      "name": "lrdatf.instance-name",
+      "name": "dbmq.instance-name",
       "type": "java.lang.String",
       "description": "instance name"
     },
     {
-      "name": "lrdatf.heartbeat-broker-interval",
+      "name": "dbmq.heartbeat-broker-interval",
       "type": "java.time.Duration",
       "description": "heartbeat broker interval"
     },
     {
-      "name": "lrdatf.persist-consumer-offset-interval",
+      "name": "dbmq.persist-consumer-offset-interval",
       "type": "java.time.Duration",
       "description": "persist consumer offset interval"
     },
     {
-      "name": "lrdatf.poll-name-server-interval",
+      "name": "dbmq.poll-name-server-interval",
       "type": "java.time.Duration",
       "description": "poll name server interval"
     },
     {
-      "name": "lrdatf.pull-time-delay-mills-when-exception",
+      "name": "dbmq.pull-time-delay-mills-when-exception",
       "type": "java.time.Duration",
       "description": "pull time delay mills when exception"
     },
     {
-      "name": "lrdatf.consumer.pull-interval",
+      "name": "dbmq.consumer.pull-interval",
       "type": "java.time.Duration",
       "description": "pull interval"
     },
     {
-      "name": "lrdatf.consumer.max-reconsume-times",
+      "name": "dbmq.consumer.max-reconsume-times",
       "type": "java.lang.Integer",
       "description": "max reconsume times"
     },
     {
-      "name": "lrdatf.consumer.consume-from-where",
-      "type": "com.neuronbit.lrdatf.common.consumer.ConsumeFromWhere",
+      "name": "dbmq.consumer.consume-from-where",
+      "type": "com.neuronbit.dbmq.common.consumer.ConsumeFromWhere",
       "description": "consume from where"
     },
     {
-      "name": "lrdatf.consumer.adjust-thread-pool-nums-threshold",
+      "name": "dbmq.consumer.adjust-thread-pool-nums-threshold",
       "type": "java.lang.Integer",
       "description": "adjust thread pool nums threshold"
     },
     {
-      "name": "lrdatf.consumer.allocate-message-queue-strategy",
-      "type": "com.neuronbit.lrdatf.spring.enums.AllocateMessageQueueMode",
+      "name": "dbmq.consumer.allocate-message-queue-strategy",
+      "type": "com.neuronbit.dbmq.spring.enums.AllocateMessageQueueMode",
       "description": "allocate message queue strategy"
     },
     {
-      "name": "lrdatf.consumer.await-termination-millis-when-shutdown",
+      "name": "dbmq.consumer.await-termination-millis-when-shutdown",
       "type": "java.time.Duration",
       "description": "await termination millis when shutdown"
     },
     {
-      "name": "lrdatf.consumer.consume-concurrently-max-span",
+      "name": "dbmq.consumer.consume-concurrently-max-span",
       "type": "java.lang.Integer",
       "description": "consume concurrently max span"
     },
     {
-      "name": "lrdatf.consumer.consume-message-batch-max-size",
+      "name": "dbmq.consumer.consume-message-batch-max-size",
       "type": "java.lang.Integer",
       "description": "consume message batch max size"
     },
     {
-      "name": "lrdatf.consumer.consume-thread-max",
+      "name": "dbmq.consumer.consume-thread-max",
       "type": "java.lang.Integer",
       "description": "consume thread max"
     },
     {
-      "name": "lrdatf.consumer.consume-thread-min",
+      "name": "dbmq.consumer.consume-thread-min",
       "type": "java.lang.Integer",
       "description": "consume thread min"
     },
     {
-      "name": "lrdatf.consumer.consume-timeout",
+      "name": "dbmq.consumer.consume-timeout",
       "type": "java.time.Duration",
       "description": "consume timeout"
     },
     {
-      "name": "lrdatf.consumer.consume-timestamp",
+      "name": "dbmq.consumer.consume-timestamp",
       "type": "java.lang.String",
       "description": "consume timestamp"
     },
     {
-      "name": "lrdatf.consumer.message-model",
-      "type": "com.neuronbit.lrdatf.common.protocol.heartbeat.MessageModel",
+      "name": "dbmq.consumer.message-model",
+      "type": "com.neuronbit.dbmq.common.protocol.heartbeat.MessageModel",
       "description": "message model"
     },
     {
-      "name": "lrdatf.consumer.pull-batch-size",
+      "name": "dbmq.consumer.pull-batch-size",
       "type": "java.lang.Integer",
       "description": "pull batch size"
     },
     {
-      "name": "lrdatf.consumer.pull-threshold-for-queue",
+      "name": "dbmq.consumer.pull-threshold-for-queue",
       "type": "java.lang.Integer",
       "description": "pull threshold for queue"
     },
     {
-      "name": "lrdatf.consumer.pull-threshold-for-topic",
+      "name": "dbmq.consumer.pull-threshold-for-topic",
       "type": "java.lang.Integer",
       "description": "pull threshold for topic"
     },
     {
-      "name": "lrdatf.consumer.pull-threshold-size-for-queue",
+      "name": "dbmq.consumer.pull-threshold-size-for-queue",
       "type": "java.lang.Integer",
       "description": "pull threshold size for queue"
     },
     {
-      "name": "lrdatf.consumer.pull-threshold-size-for-topic",
+      "name": "dbmq.consumer.pull-threshold-size-for-topic",
       "type": "java.lang.Integer",
       "description": "pull threshold size for topic"
     },
     {
-      "name": "lrdatf.consumer.suspend-current-queue-time-millis",
+      "name": "dbmq.consumer.suspend-current-queue-time-millis",
       "type": "java.time.Duration",
       "description": "suspend current queue time millis"
     },
     {
-      "name": "lrdatf.producer.default-topic-queue-nums",
+      "name": "dbmq.producer.default-topic-queue-nums",
       "type": "java.lang.Integer",
       "description": "default topic queue nums"
     },
     {
-      "name": "lrdatf.producer.retry-times-when-send-failed",
+      "name": "dbmq.producer.retry-times-when-send-failed",
       "type": "java.lang.Integer",
       "description": "retry times when send failed"
     },
     {
-      "name": "lrdatf.producer.send-msg-timeout",
+      "name": "dbmq.producer.send-msg-timeout",
       "type": "java.time.Duration",
       "description": "send msg timeout"
     },
     {
-      "name": "lrdatf.producer.client-callback-executor-threads",
+      "name": "dbmq.producer.client-callback-executor-threads",
       "type": "java.lang.Integer",
       "description": "client callback executor threads"
     }
   ],
   "hints": [
     {
-      "name": "lrdatf.consumer.consume-from-where",
+      "name": "dbmq.consumer.consume-from-where",
       "values": [
         {
           "value": "CONSUME_FROM_LAST_OFFSET",
@@ -181,7 +181,7 @@
       ]
     },
     {
-      "name": "lrdatf.consumer.allocate-message-queue-strategy",
+      "name": "dbmq.consumer.allocate-message-queue-strategy",
       "values": [
         {
           "value": "AVG",
@@ -190,7 +190,7 @@
       ]
     },
     {
-      "name": "lrdatf.consumer.message-model",
+      "name": "dbmq.consumer.message-model",
       "values": [
         {
           "value": "BROADCASTING",

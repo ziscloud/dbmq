@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.neuronbit.lrdatf.spring.autoconfiguration.LrdatfAutoConfiguration
+com.neuronbit.dbmq.spring.autoconfiguration.DBMQAutoConfiguration

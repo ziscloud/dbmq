@@ -1,4 +1,4 @@
-rootProject.name = 'lrdatf'
+rootProject.name = 'dbmq'
 include 'core'
 include 'example'
 include 'mysql'
