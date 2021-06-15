@@ -1,4 +1,5 @@
 # DBMQ
+![Travis (.org)](https://img.shields.io/travis/ziscloud/dbmq)
 [![GitHub issues](https://img.shields.io/github/issues/ziscloud/dbmq.git)](https://github.com/ziscloud/dbmq.git/issues)
 [![GitHub stars](https://img.shields.io/github/stars/ziscloud/dbmq.git)](https://github.com/ziscloud/dbmq.git/stargazers)
 [![GitHub license](https://img.shields.io/github/license/ziscloud/dbmq.git)](https://github.com/ziscloud/dbmq.git)
