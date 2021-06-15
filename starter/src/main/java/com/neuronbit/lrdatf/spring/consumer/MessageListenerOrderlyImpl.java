@@ -19,9 +19,9 @@
 
 package com.neuronbit.lrdatf.spring.consumer;
 
-import com.neuronbit.lrdatf.client.consumer.listener.ConsumeConcurrentlyContext;
-import com.neuronbit.lrdatf.client.consumer.listener.ConsumeConcurrentlyStatus;
-import com.neuronbit.lrdatf.client.consumer.listener.MessageListenerConcurrently;
+import com.neuronbit.lrdatf.client.consumer.listener.ConsumeOrderlyContext;
+import com.neuronbit.lrdatf.client.consumer.listener.ConsumeOrderlyStatus;
+import com.neuronbit.lrdatf.client.consumer.listener.MessageListenerOrderly;
 import com.neuronbit.lrdatf.common.message.MessageExt;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,19 +29,24 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class MessageListenerConcurrentlyImpl implements MessageListenerConcurrently, MessageConsumerRegistry {
+public class MessageListenerOrderlyImpl implements MessageListenerOrderly, MessageConsumerRegistry {
     private ConcurrentHashMap<String, MessageConsumerAdaptor> handlers = new ConcurrentHashMap<>();
 
+    @Override
+    public void register(String topic, MessageConsumerAdaptor messageConsumerAdaptor) {
+        handlers.put(topic, messageConsumerAdaptor);
+    }
+
     /**
-     * It is not recommend to throw exception,rather than returning ConsumeConcurrentlyStatus.RECONSUME_LATER if
-     * consumption failure
+     * It is not recommend to throw exception,rather than returning ConsumeOrderlyStatus.SUSPEND_CURRENT_QUEUE_A_MOMENT
+     * if consumption failure
      *
      * @param msgs    msgs.size() >= 1<br> DefaultMQPushConsumer.consumeMessageBatchMaxSize=1,you can modify here
      * @param context
      * @return The consume status
      */
     @Override
-    public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+    public ConsumeOrderlyStatus consumeMessage(List<MessageExt> msgs, ConsumeOrderlyContext context) {
         final String topic = context.getMessageQueue().getTopic();
         final MessageConsumerAdaptor adaptor = handlers.get(topic);
         if (adaptor != null) {
@@ -49,17 +54,12 @@ public class MessageListenerConcurrentlyImpl implements MessageListenerConcurren
                 adaptor.consume(msgs);
             } catch (Exception e) {
                 log.error("consume message failed", e);
-                return ConsumeConcurrentlyStatus.RECONSUME_LATER;
+                return ConsumeOrderlyStatus.SUSPEND_CURRENT_QUEUE_A_MOMENT;
             }
-            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+            return ConsumeOrderlyStatus.SUCCESS;
         } else {
             log.error("");
-            return ConsumeConcurrentlyStatus.RECONSUME_LATER;
+            return ConsumeOrderlyStatus.SUSPEND_CURRENT_QUEUE_A_MOMENT;
         }
-    }
-
-    @Override
-    public void register(String topic, MessageConsumerAdaptor messageConsumerAdaptor) {
-        handlers.put(topic, messageConsumerAdaptor);
     }
 }

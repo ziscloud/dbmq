@@ -207,7 +207,7 @@ public class DefaultMQPushConsumer extends ClientConfig implements MQPushConsume
     /**
      * Message pull Interval
      */
-    private long pullInterval = 0;
+    private long pullInterval = 30 * 1000;
 
     /**
      * Batch consumption size

@@ -17,28 +17,39 @@
  *
  */
 
-package com.neuronbit.lrdatf.spring.enums;
+package com.neuronbit.lrdatf.listener;
 
-import com.neuronbit.lrdatf.client.consumer.AllocateMessageQueueStrategy;
-import com.neuronbit.lrdatf.client.consumer.rebalance.AllocateMessageQueueAveragely;
+import com.neuronbit.lrdatf.spring.ann.MessageConsumer;
+import com.neuronbit.lrdatf.spring.ann.MessageTopic;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Slf4j
-public enum AllocateMessageQueueMode {
-    AVG(AllocateMessageQueueAveragely.class);
+@MessageConsumer
+public class TestMessageListener {
+    private volatile AtomicInteger count = new AtomicInteger(0);
+    private CountDownLatch countDownLatch;
 
-    private final Class<? extends AllocateMessageQueueStrategy> clazz;
+    @MessageTopic(name = "TestTopic")
+    public void consume(TestMessage msg) {
+        log.info("get message:{}, count:{}", msg, count.incrementAndGet());
 
-    AllocateMessageQueueMode(Class<? extends AllocateMessageQueueStrategy> clazz) {
-        this.clazz = clazz;
+        if (countDownLatch != null) {
+            countDownLatch.countDown();
+        }
     }
 
-    public AllocateMessageQueueStrategy getInstance() {
-        try {
-            return this.clazz.newInstance();
-        } catch (Exception e) {
-            log.error("can not create instance of {}", clazz.getName(), e);
-            return null;
-        }
+    public int getCount() {
+        return count.get();
+    }
+
+    public void setCountDownLatch(CountDownLatch countDownLatch) {
+        this.countDownLatch = countDownLatch;
+    }
+
+    public void resetCount() {
+        count.set(0);
     }
 }
