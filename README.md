@@ -18,7 +18,7 @@ We have following constraints:
 
 * we do not want these tasks involved in our main processing, we want to response to the client ASAP.
 * we must make sure these tasks complete successfully at least once.
-* we do not want to employee RocketMQ, RabbitMQ, or Kafka, these tools is good, but they need more resources and
+* we do not want to employee RocketMQ, RabbitMQ, or Kafka, these tools are good, but they need more resources and
   maintenance, it is not affordable for us.
 
 We need a lite weighted MQ that can be embedded into application, and we already got JAVA and database/redis, so we
