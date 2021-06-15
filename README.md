@@ -1,5 +1,4 @@
 # DBMQ
-----------
 [![GitHub issues](https://img.shields.io/github/issues/ziscloud/dbmq.git)](https://github.com/ziscloud/dbmq.git/issues)
 [![GitHub stars](https://img.shields.io/github/stars/ziscloud/dbmq.git)](https://github.com/ziscloud/dbmq.git/stargazers)
 [![GitHub license](https://img.shields.io/github/license/ziscloud/dbmq.git)](https://github.com/ziscloud/dbmq.git)
@@ -8,7 +7,6 @@ DBMQ is a lite message queue that use database as broker, it based on Apache Roc
 and streaming platform.
 
 # Why another MQ?
-----------
 In our circumstance, we need an intra-application message processing for online request handling, e.g.
 
 * we need to send an SMS to customer
