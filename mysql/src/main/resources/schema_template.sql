@@ -48,152 +48,62 @@ create table lock_table
     primary key (lock_id)
 );
 
-create table message_DLQ_<GROUP_NAME>_0
+create table message_DLQ_@GROUP_NAME_0
 (
-    id
-    int
-    unsigned
-    auto_increment
-    primary
-    key,
-    topic
-    varchar
-(
-    50
-) null,
-    `keys` varchar
-(
-    255
-) null,
-    tags varchar
-(
-    255
-) null,
-    body text null,
-    queue_id int unsigned null,
-    born_timestamp bigint unsigned null,
-    born_host varchar
-(
-    45
-) null,
-    msg_id varchar
-(
-    45
-) null,
-    properties varchar
-(
-    255
-) null,
+    id              int unsigned auto_increment primary key,
+    topic           varchar(50)      null,
+    `keys`          varchar(255)     null,
+    tags            varchar(255)     null,
+    body            text             null,
+    queue_id        int unsigned     null,
+    born_timestamp  bigint unsigned  null,
+    born_host       varchar(45)      null,
+    msg_id          varchar(45)      null,
+    properties      varchar(255)     null,
     max_recon_times tinyint unsigned null,
-    recon_times tinyint unsigned null,
-    producer_group varchar
-(
-    50
-) null,
-    consumer_group varchar
-(
-    50
-) null,
-    store_timestamp bigint unsigned null
-    );
+    recon_times     tinyint unsigned null,
+    producer_group  varchar(50)      null,
+    consumer_group  varchar(50)      null,
+    store_timestamp bigint unsigned  null
+);
 
-create table message_RETRY_<GROUP_NAME>_0
+create table message_RETRY_@GROUP_NAME_0
 (
-    id
-    int
-    unsigned
-    auto_increment
-    primary
-    key,
-    topic
-    varchar
-(
-    50
-) null,
-    `keys` varchar
-(
-    255
-) null,
-    tags varchar
-(
-    255
-) null,
-    body text null,
-    queue_id int unsigned null,
-    born_timestamp bigint unsigned null,
-    born_host varchar
-(
-    45
-) null,
-    msg_id varchar
-(
-    45
-) null,
-    properties varchar
-(
-    255
-) null,
+    id              int unsigned auto_increment primary key,
+    topic           varchar(50)      null,
+    `keys`          varchar(255)     null,
+    tags            varchar(255)     null,
+    body            text             null,
+    queue_id        int unsigned     null,
+    born_timestamp  bigint unsigned  null,
+    born_host       varchar(45)      null,
+    msg_id          varchar(45)      null,
+    properties      varchar(255)     null,
     max_recon_times tinyint unsigned null,
-    recon_times tinyint unsigned null,
-    producer_group varchar
-(
-    50
-) null,
-    consumer_group varchar
-(
-    50
-) null,
-    store_timestamp bigint unsigned null
-    );
+    recon_times     tinyint unsigned null,
+    producer_group  varchar(50)      null,
+    consumer_group  varchar(50)      null,
+    store_timestamp bigint unsigned  null
+);
 
-create table message_<TOPIC>_<QUEUE_NUM>
+create table message_@TOPIC_@QUEUE_NUM
 (
-    id
-    int
-    unsigned
-    auto_increment
-    primary
-    key,
-    topic
-    varchar
-(
-    50
-) null,
-    `keys` varchar
-(
-    255
-) null,
-    tags varchar
-(
-    255
-) null,
-    body text null,
-    queue_id int unsigned null,
-    born_timestamp bigint unsigned null,
-    born_host varchar
-(
-    45
-) null,
-    msg_id varchar
-(
-    45
-) null,
-    properties varchar
-(
-    255
-) null,
+    id              int unsigned auto_increment primary key,
+    topic           varchar(50)      null,
+    `keys`          varchar(255)     null,
+    tags            varchar(255)     null,
+    body            text             null,
+    queue_id        int unsigned     null,
+    born_timestamp  bigint unsigned  null,
+    born_host       varchar(45)      null,
+    msg_id          varchar(45)      null,
+    properties      varchar(255)     null,
     max_recon_times tinyint unsigned null,
-    recon_times tinyint unsigned null,
-    producer_group varchar
-(
-    50
-) null,
-    consumer_group varchar
-(
-    50
-) null,
-    store_timestamp bigint unsigned null
-    );
+    recon_times     tinyint unsigned null,
+    producer_group  varchar(50)      null,
+    consumer_group  varchar(50)      null,
+    store_timestamp bigint unsigned  null
+);
 
 create table producer_data
 (
@@ -218,15 +128,15 @@ INSERT INTO lock_table (lock_id, lock_value, lock_timestamp)
 VALUES ('client_housekeeping', null, 0);
 
 INSERT INTO topic_config (topic, queue_nums, perm, status, created_timestamp)
-VALUES ('RETRY_<GROUP_NAME>', 1, 6, 'ACTIVE', unix_timestamp());
+VALUES ('RETRY_@GROUP_NAME', 1, 6, 'ACTIVE', unix_timestamp());
 INSERT INTO topic_config (topic, queue_nums, perm, status, created_timestamp)
-VALUES ('<TOPIC>', 3, 6, 'ACTIVE', unix_timestamp());
+VALUES ('@TOPIC', 3, 6, 'ACTIVE', unix_timestamp());
 
 INSERT INTO consumer_offset (topic, queue_id, group_name, offset_value, update_timestamp)
-VALUES ('RETRY_<GROUP_NAME>', 0, '<GROUP_NAME>', 0, unix_timestamp());
+VALUES ('RETRY_@GROUP_NAME', 0, '@GROUP_NAME', 0, unix_timestamp());
 INSERT INTO consumer_offset (topic, queue_id, group_name, offset_value, update_timestamp)
-VALUES ('<TOPIC>', 0, '<GROUP_NAME>', 0, unix_timestamp());
+VALUES ('@TOPIC', 0, '@GROUP_NAME', 0, unix_timestamp());
 INSERT INTO consumer_offset (topic, queue_id, group_name, offset_value, update_timestamp)
-VALUES ('<TOPIC>', 1, '<GROUP_NAME>', 0, unix_timestamp());
+VALUES ('@TOPIC', 1, '@GROUP_NAME', 0, unix_timestamp());
 INSERT INTO consumer_offset (topic, queue_id, group_name, offset_value, update_timestamp)
-VALUES ('<TOPIC>', 2, '<GROUP_NAME>', 0, unix_timestamp());
+VALUES ('@TOPIC', 2, '@GROUP_NAME', 0, unix_timestamp());
