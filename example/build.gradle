@@ -2,33 +2,14 @@ plugins {
     id 'java'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    implementation project(":client")
-    implementation project(":core")
-    implementation project(":mysql")
+    implementation project(":dbmq-client")
+    implementation project(":dbmq-core")
+    implementation project(":dbmq-mysql")
 
     implementation 'com.alibaba:druid:1.2.6'
 
     implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.14.1'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
-
-    testImplementation "junit:junit:${property('junit.version')}"
-    testImplementation 'org.assertj:assertj-core:2.6.0'
-    testImplementation 'org.mockito:mockito-core:2.23.0'
-    testImplementation "org.powermock:powermock-module-junit4:${property('powermock.version')}"
-    testImplementation "org.powermock:powermock-api-mockito2:${property('powermock.version')}"
-}
-
-test {
-    useJUnit()
-
-    maxHeapSize = '1G'
 }

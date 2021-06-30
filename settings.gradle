@@ -1,7 +1,14 @@
 rootProject.name = 'dbmq'
+
 include 'core'
 include 'example'
 include 'mysql'
 include 'starter'
 include 'client'
+
+project(':core').name = 'dbmq-core'
+project(':example').name = 'dbmq-example'
+project(':mysql').name = 'dbmq-mysql'
+project(':starter').name = 'dbmq-starter'
+project(':client').name = 'dbmq-client'
 

@@ -762,29 +762,12 @@ public class DefaultMQPushConsumerImpl implements MQConsumerInner {
 
     public void subscribe(String topic, String subExpression) throws MQClientException {
         try {
-            SubscriptionData subscriptionData = FilterAPI.buildSubscriptionData(this.defaultMQPushConsumer.getConsumerGroup(),
+            SubscriptionData subscriptionData = FilterAPI.buildSubscriptionData(defaultMQPushConsumer.getConsumerGroup(),
                     topic, subExpression);
             this.rebalanceImpl.getSubscriptionInner().put(topic, subscriptionData);
             if (this.mQClientFactory != null) {
                 this.mQClientFactory.sendHeartbeatToAllBrokerWithLock();
             }
-        } catch (Exception e) {
-            throw new MQClientException("subscription exception", e);
-        }
-    }
-
-    public void subscribe(String topic, String fullClassName, String filterClassSource) throws MQClientException {
-        try {
-            SubscriptionData subscriptionData = FilterAPI.buildSubscriptionData(this.defaultMQPushConsumer.getConsumerGroup(),
-                    topic, "*");
-            subscriptionData.setSubString(fullClassName);
-            subscriptionData.setClassFilterMode(true);
-            subscriptionData.setFilterClassSource(filterClassSource);
-            this.rebalanceImpl.getSubscriptionInner().put(topic, subscriptionData);
-            if (this.mQClientFactory != null) {
-                this.mQClientFactory.sendHeartbeatToAllBrokerWithLock();
-            }
-
         } catch (Exception e) {
             throw new MQClientException("subscription exception", e);
         }

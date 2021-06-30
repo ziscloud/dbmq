@@ -103,45 +103,6 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
     public SendResult send(Message msg, long timeout) throws MQClientException, InterruptedException, RemotingTooMuchRequestException {
         return this.defaultMQProducerImpl.send(msg, timeout);
     }
-//
-//    /**
-//     * Send message to broker asynchronously. </p>
-//     * <p>
-//     * This method returns immediately. On sending completion, <code>sendCallback</code> will be executed. </p>
-//     * <p>
-//     * Similar to {@link #send(Message)}, internal implementation would potentially retry up to {@link
-//     * #retryTimesWhenSendAsyncFailed} times before claiming sending failure, which may yield message duplication and
-//     * application developers are the one to resolve this potential issue.
-//     *
-//     * @param msg          Message to send.
-//     * @param sendCallback Callback to execute on sending completed, either successful or unsuccessful.
-//     * @throws MQClientException    if there is any client error.
-//     * @throws RemotingException    if there is any network-tier error.
-//     * @throws InterruptedException if the sending thread is interrupted.
-//     */
-////    @Override
-////    public void send(Message msg,
-////                     SendCallback sendCallback) throws MQClientException, RemotingException, InterruptedException {
-////        msg.setTopic(withNamespace(msg.getTopic()));
-////        this.defaultMQProducerImpl.send(msg, sendCallback);
-////    }
-//
-//    /**
-//     * Same to {@link #send(Message, SendCallback)} with send timeout specified in addition.
-//     *
-//     * @param msg          message to send.
-//     * @param sendCallback Callback to execute.
-//     * @param timeout      send timeout.
-//     * @throws MQClientException    if there is any client error.
-//     * @throws RemotingException    if there is any network-tier error.
-//     * @throws InterruptedException if the sending thread is interrupted.
-//     */
-////    @Override
-////    public void send(Message msg, SendCallback sendCallback, long timeout)
-////            throws MQClientException, RemotingException, InterruptedException {
-////        msg.setTopic(withNamespace(msg.getTopic()));
-////        this.defaultMQProducerImpl.send(msg, sendCallback, timeout);
-////    }
 
     public DefaultMQProducerImpl getDefaultMQProducerImpl() {
         return this.defaultMQProducerImpl;
@@ -152,9 +113,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
     }
 
     public String getCreateTopicKey() {
-        /**
-         * Just for testing or demo program
-         */
+        //Just for testing or demo program
         return TopicValidator.AUTO_CREATE_TOPIC_KEY_TOPIC;
     }
 

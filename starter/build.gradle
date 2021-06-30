@@ -1,34 +1,36 @@
-plugins {
-    id 'java-library'
+buildscript {
+    ext {
+        springBootVersion = '2.5.2'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath(
+                "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+apply plugin: 'io.spring.dependency-management'
 
-repositories {
-    mavenCentral()
+dependencyManagement {
+    imports {
+        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    }
 }
 
 dependencies {
-    api project(":client")
-    api project(":mysql")
+    api project(":dbmq-client")
+    api project(":dbmq-mysql")
 
-    api 'org.springframework.boot:spring-boot-autoconfigure:2.5.0'
-    api 'org.springframework.boot:spring-boot-starter-validation:2.5.0'
-    api 'org.springframework.boot:spring-boot-starter-jdbc:2.5.0'
+    api 'org.springframework.boot:spring-boot-autoconfigure'
+    api 'org.springframework.boot:spring-boot-starter-validation'
+    api 'org.springframework.boot:spring-boot-starter-jdbc'
 
-    compileOnly 'org.projectlombok:lombok:1.18.20'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.h2database:h2'
 
-    testImplementation "junit:junit:${property('junit.version')}"
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.0'
-    testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
-
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
-}
-
-test {
-    useJUnit()
-
-    maxHeapSize = '1G'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 }

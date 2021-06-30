@@ -589,20 +589,6 @@ public class DefaultMQPushConsumer extends ClientConfig implements MQPushConsume
         this.defaultMQPushConsumerImpl.subscribe(withNamespace(topic), subExpression);
     }
 
-//
-//    /**
-//     * Subscribe a topic by message selector.
-//     *
-//     * @param topic           topic to consume.
-//     * @param messageSelector {@link com.neuronbit.dbmq.client.consumer.MessageSelector}
-//     * @see com.neuronbit.dbmq.client.consumer.MessageSelector#bySql
-//     * @see com.neuronbit.dbmq.client.consumer.MessageSelector#byTag
-//     */
-//    @Override
-//    public void subscribe(final String topic, final MessageSelector messageSelector) throws MQClientException {
-//        this.defaultMQPushConsumerImpl.subscribe(withNamespace(topic), messageSelector);
-//    }
-
     /**
      * Un-subscribe the specified topic from subscription.
      *

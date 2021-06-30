@@ -158,6 +158,9 @@ public class MQClientAPIImpl implements MQClientAPI {
                         insertConsumerStmt.setString(4, consumerData.getMessageModel().toString());
                         insertConsumerStmt.setString(5, consumerData.getConsumeFromWhere().toString());
                         insertConsumerStmt.setString(6, subscriptionData.getTopic());
+                        subscriptionData.getCodeSet();
+                        subscriptionData.getTagsSet();
+
                         insertConsumerStmt.setLong(7, subscriptionData.getSubVersion());
                         insertConsumerStmt.addBatch();
                     }

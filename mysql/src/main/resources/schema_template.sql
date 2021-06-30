@@ -129,6 +129,7 @@ VALUES ('client_housekeeping', null, 0);
 
 INSERT INTO topic_config (topic, queue_nums, perm, status, created_timestamp)
 VALUES ('RETRY_@GROUP_NAME', 1, 6, 'ACTIVE', unix_timestamp());
+
 INSERT INTO topic_config (topic, queue_nums, perm, status, created_timestamp)
 VALUES ('@TOPIC', 3, 6, 'ACTIVE', unix_timestamp());
 
