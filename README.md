@@ -4,7 +4,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/ziscloud/dbmq.git)](https://github.com/ziscloud/dbmq.git/stargazers)
 [![GitHub license](https://img.shields.io/github/license/ziscloud/dbmq.git)](https://github.com/ziscloud/dbmq.git)
 
-DBMQ is a lite message queue that use database as broker, it based on Apache RocketMQ which is a distributed messaging
+DBMQ is a lite message queue that use database as broker, it inspired by Apache RocketMQ which is a distributed messaging
 and streaming platform.
 
 # Why another MQ?
