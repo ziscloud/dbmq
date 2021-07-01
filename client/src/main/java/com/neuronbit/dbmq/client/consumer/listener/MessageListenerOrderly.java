@@ -28,7 +28,7 @@ public interface MessageListenerOrderly extends MessageListener {
      * It is not recommend to throw exception,rather than returning ConsumeOrderlyStatus.SUSPEND_CURRENT_QUEUE_A_MOMENT
      * if consumption failure
      *
-     * @param msgs msgs.size() >= 1<br> DefaultMQPushConsumer.consumeMessageBatchMaxSize=1,you can modify here
+     * @param msgs msgs.size() &gt;= 1<br> DefaultMQPushConsumer.consumeMessageBatchMaxSize=1,you can modify here
      * @return The consume status
      */
     ConsumeOrderlyStatus consumeMessage(final List<MessageExt> msgs,

@@ -1,9 +1,12 @@
-group 'org.neuronbit.dbmq'
-version '0.1-SNAPSHOT'
-
 allprojects {
+    group 'org.neuronbit.dbmq'
+    version '0.0.1-SNAPSHOT'
+}
+
+subprojects {
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
+    apply plugin: 'signing'
 
     repositories {
         mavenCentral()
@@ -11,8 +14,8 @@ allprojects {
 
     dependencies {
         testImplementation "junit:junit:${property('junit.version')}"
-        testImplementation 'org.assertj:assertj-core:2.6.0'
-        testImplementation 'org.mockito:mockito-core:2.23.0'
+        testImplementation "org.assertj:assertj-core:${property('assertj.version')}"
+        testImplementation "org.mockito:mockito-core:${property('mockito.version')}"
         testImplementation "org.powermock:powermock-module-junit4:${property('powermock.version')}"
         testImplementation "org.powermock:powermock-api-mockito2:${property('powermock.version')}"
     }
@@ -20,5 +23,76 @@ allprojects {
     test {
         useJUnit()
         maxHeapSize = '1G'
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    javadoc {
+        if (JavaVersion.current().isJava9Compatible()) {
+            options.addBooleanOption('html5', true)
+        }
+    }
+
+
+    java {
+        withJavadocJar()
+        withSourcesJar()
+    }
+
+    publishing {
+        repositories {
+            maven {
+                name = "nexus"
+                credentials(PasswordCredentials)
+                def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            }
+        }
+        publications {
+            mavenJava(MavenPublication) {
+                from project.components.java
+                versionMapping {
+                    usage('java-api') {
+                        fromResolutionOf('runtimeClasspath')
+                    }
+                    usage('java-runtime') {
+                        fromResolutionResult()
+                    }
+                }
+                pom {
+                    name = "dbmq"
+                    description = "DBMQ is a lite message queue that use database as broker."
+                    url = "https://github.com/ziscloud/dbmq"
+                    inceptionYear = "2021"
+
+                    scm {
+                        url = "https://github.com/ziscloud/dbmq.git"
+                        connection = "scm:https://github.com/ziscloud/dbmq.git"
+                        developerConnection = "scm:https://github.com/ziscloud/dbmq.git"
+                    }
+
+                    licenses {
+                        license {
+                            name.set("The Apache License, Version 2.0")
+                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = "ziscloud"
+                            name = "Shunyun Wong"
+                            email = "ziscloud@gmail.com"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    signing {
+        sign publishing.publications.mavenJava
     }
 }

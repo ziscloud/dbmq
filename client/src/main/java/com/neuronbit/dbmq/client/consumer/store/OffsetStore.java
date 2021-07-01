@@ -41,6 +41,8 @@ public interface OffsetStore {
     /**
      * Get offset from local storage
      *
+     * @param mq   message queue
+     * @param type read offset type
      * @return The fetched offset
      */
     long readOffset(final MessageQueue mq, final ReadOffsetType type);
@@ -68,7 +70,6 @@ public interface OffsetStore {
     /**
      * @param mq
      * @param offset
-     * @param isOneway
      */
     void updateConsumeOffsetToBroker(MessageQueue mq, long offset) throws MQClientException, InterruptedException, MQBrokerException, SQLException;
 }

@@ -1,13 +1,10 @@
 buildscript {
-    ext {
-        springBootVersion = '2.5.2'
-    }
     repositories {
         mavenCentral()
     }
     dependencies {
         classpath(
-                "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+                "org.springframework.boot:spring-boot-gradle-plugin:${property('spring.boot.version')}")
     }
 }
 
@@ -32,5 +29,6 @@ dependencies {
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 }

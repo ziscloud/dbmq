@@ -28,7 +28,7 @@ public interface MessageListenerConcurrently extends MessageListener {
      * It is not recommend to throw exception,rather than returning ConsumeConcurrentlyStatus.RECONSUME_LATER if
      * consumption failure
      *
-     * @param msgs msgs.size() >= 1<br> DefaultMQPushConsumer.consumeMessageBatchMaxSize=1,you can modify here
+     * @param msgs msgs.size() &gt;= 1<br> DefaultMQPushConsumer.consumeMessageBatchMaxSize=1,you can modify here
      * @return The consume status
      */
     ConsumeConcurrentlyStatus consumeMessage(final List<MessageExt> msgs,

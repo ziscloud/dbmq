@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * <p>
  * In most scenarios, this is the mostly recommended class to consume messages.
  * </p>
  * <p>
@@ -288,7 +289,6 @@ public class DefaultMQPushConsumer extends ClientConfig implements MQPushConsume
      * Constructor specifying consumer group, RPC hook and message queue allocating algorithm.
      *
      * @param consumerGroup                Consume queue.
-     * @param rpcHook                      RPC hook to execute before each remoting command.
      * @param allocateMessageQueueStrategy Message queue allocating algorithm.
      */
     public DefaultMQPushConsumer(final String consumerGroup, AllocateMessageQueueStrategy allocateMessageQueueStrategy) {
@@ -300,7 +300,6 @@ public class DefaultMQPushConsumer extends ClientConfig implements MQPushConsume
      *
      * @param namespace                    Namespace for this MQ Producer instance.
      * @param consumerGroup                Consume queue.
-     * @param rpcHook                      RPC hook to execute before each remoting command.
      * @param allocateMessageQueueStrategy Message queue allocating algorithm.
      */
     public DefaultMQPushConsumer(final String namespace, final String consumerGroup,
@@ -337,7 +336,6 @@ public class DefaultMQPushConsumer extends ClientConfig implements MQPushConsume
      * Constructor specifying consumer group, RPC hook, message queue allocating algorithm, enabled msg trace flag and customized trace topic name.
      *
      * @param consumerGroup                Consume queue.
-     * @param rpcHook                      RPC hook to execute before each remoting command.
      * @param allocateMessageQueueStrategy message queue allocating algorithm.
      * @param enableMsgTrace               Switch flag instance for message trace.
      * @param customizedTraceTopic         The name value of message trace topic.If you don't config,you can use the default trace topic name.
@@ -352,7 +350,6 @@ public class DefaultMQPushConsumer extends ClientConfig implements MQPushConsume
      *
      * @param namespace                    Namespace for this MQ Producer instance.
      * @param consumerGroup                Consume queue.
-     * @param rpcHook                      RPC hook to execute before each remoting command.
      * @param allocateMessageQueueStrategy message queue allocating algorithm.
      * @param enableMsgTrace               Switch flag instance for message trace.
      * @param customizedTraceTopic         The name value of message trace topic.If you don't config,you can use the default trace topic name.

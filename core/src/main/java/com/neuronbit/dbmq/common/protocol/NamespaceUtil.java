@@ -28,8 +28,8 @@ public class NamespaceUtil {
 
     /**
      * Unpack namespace from resource, just like:
-     * (1) MQ_INST_XX%Topic_XXX --> Topic_XXX
-     * (2) %RETRY%MQ_INST_XX%GID_XXX --> %RETRY%GID_XXX
+     * (1) MQ_INST_XX%Topic_XXX --&gt; Topic_XXX
+     * (2) %RETRY%MQ_INST_XX%GID_XXX --&gt; %RETRY%GID_XXX
      *
      * @param resourceWithNamespace, topic/groupId with namespace.
      * @return topic/groupId without namespace.
@@ -59,10 +59,10 @@ public class NamespaceUtil {
 
     /**
      * If resource contains the namespace, unpack namespace from resource, just like:
-     * (1) (MQ_INST_XX1%Topic_XXX1, MQ_INST_XX1) --> Topic_XXX1
-     * (2) (MQ_INST_XX2%Topic_XXX2, NULL) --> MQ_INST_XX2%Topic_XXX2
-     * (3) (%RETRY%MQ_INST_XX1%GID_XXX1, MQ_INST_XX1) --> %RETRY%GID_XXX1
-     * (4) (%RETRY%MQ_INST_XX2%GID_XXX2, MQ_INST_XX3) --> %RETRY%MQ_INST_XX2%GID_XXX2
+     * (1) (MQ_INST_XX1%Topic_XXX1, MQ_INST_XX1) --&gt; Topic_XXX1
+     * (2) (MQ_INST_XX2%Topic_XXX2, NULL) --&gt; MQ_INST_XX2%Topic_XXX2
+     * (3) (%RETRY%MQ_INST_XX1%GID_XXX1, MQ_INST_XX1) --&gt; %RETRY%GID_XXX1
+     * (4) (%RETRY%MQ_INST_XX2%GID_XXX2, MQ_INST_XX3) --&gt; %RETRY%MQ_INST_XX2%GID_XXX2
      *
      * @param resourceWithNamespace, topic/groupId with namespace.
      * @param namespace,             namespace to be unpacked.
